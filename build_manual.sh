@@ -3,6 +3,7 @@ set -x
 rm -rf src/.lake/build
 
 cd src
+lake exe cache get
 lake build
 cd ..
 
