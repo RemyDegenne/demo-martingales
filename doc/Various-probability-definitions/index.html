@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      (function(){
+  const {protocol:proto, host:hostName, pathname:path, search:srch, hash:hsh} = window.location;
+  if (!(path.endsWith("/") || path.endsWith(".html"))) {
+    window.location.replace(`${proto}//${hostName}${path}/${srch}${hsh}`);
+  }
+})()</script>
+    <base href="./../"><meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <title>Various probability definitions</title><link rel="stylesheet" href="book.css">
+    <script>
+      const __versoSiteRoot = document.baseURI;</script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
+    <script src="-verso-data/elasticlunr.min.js"></script>
+    <script src="-verso-data/katex/katex.js"></script>
+    <script src="-verso-data/katex/math.js"></script>
+    <script src="-verso-data/popper.js"></script>
+    <script src="-verso-data/tippy.js"></script>
+    <script src="-verso-data/searchIndex.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="-verso-data/katex/katex.css">
+    <link rel="stylesheet" href="-verso-data/tippy-border.css">
+    <style>
+
+.hl.lean {
+  white-space: pre;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.hl.lean .keyword {
+  font-weight : bold;
+}
+
+.hl.lean .var {
+  font-style: italic;
+  position: relative;
+}
+
+.hover-container {
+  width: 0;
+  height: 0;
+  position: relative;
+  display: inline;
+}
+
+.hl.lean a {
+  color: inherit;
+  text-decoration: currentcolor underline dotted;
+}
+
+.hl.lean a:hover {
+  text-decoration: currentcolor underline solid;
+}
+
+.hl.lean .hover-info {
+  white-space: normal;
+}
+
+.hl.lean .token .hover-info {
+  display: none;
+  position: absolute;
+  background-color: #e5e5e5;
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 300;
+  font-size: inherit;
+}
+
+.hl.lean .hover-info.messages {
+  max-height: 10rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0 0.5rem 0 0;
+  display: block;
+}
+
+.hl.lean .hover-info code {
+  white-space: pre-wrap;
+}
+
+.hl.lean .hover-info.messages > code {
+  padding: 0.5rem;
+  display: block;
+  width: fit-content;
+}
+
+.hl.lean .hover-info.messages > code:only-child {
+  margin: 0;
+}
+
+.hl.lean .hover-info.messages > code {
+  margin: 0.1rem;
+}
+
+.hl.lean .hover-info.messages > code:not(:first-child) {
+  margin-top: 0rem;
+}
+
+.hl.lean.block {
+  display: block;
+}
+
+.hl.lean.inline {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.hl.lean .token {
+  transition: all 0.25s; /* Slight fade for highlights */
+}
+
+@media (hover: hover) {
+  .hl.lean .token.binding-hl, .hl.lean .literal.string:hover, .hl.lean .token.typed:hover {
+    background-color: #eee;
+    border-radius: 2px;
+    transition: none;
+  }
+}
+
+
+.hl.lean .has-info .token:not(.tactic-state):not(.tactic-state *), .hl.lean .has-info .inter-text:not(.tactic-state):not(.tactic-state *) {
+  text-decoration-style: wavy;
+  text-decoration-line: underline;
+  text-decoration-thickness: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.hl.lean .has-info .hover-info {
+  display: none;
+  position: absolute;
+  transform: translate(0.25rem, 0.3rem);
+  border: 1px solid black;
+  padding: 0.5rem;
+  z-index: 400;
+  text-align: left;
+}
+
+.hl.lean .has-info.error :not(.tactic-state):not(.tactic-state *){
+  text-decoration-color: red;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.error:hover {
+    background-color: #ffb3b3;
+  }
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #ffb3b3;
+}
+
+.tippy-box[data-theme~='error'] .hl.lean .hover-info.messages > code.error {
+  background: none;
+  border: none;
+}
+
+.error pre {
+    color: red;
+}
+
+.hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-warning-color);
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.warning:hover {
+    background-color:var(--verso-warning-color);
+  }
+}
+
+.hl.lean .hover-info.messages > code.warning {
+  background-color: var(--verso-warning-color);
+}
+
+.hl.lean .hover-info.messages > code.error {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='warning'] .hl.lean .hover-info.messages > code.warning {
+  background: none;
+  border: none;
+}
+
+
+.hl.lean .has-info.info :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: blue;
+}
+
+@media (hover: hover) {
+  .hl.lean .has-info.info:hover {
+    background-color: #4777ff;
+  }
+}
+
+
+.hl.lean .hover-info.messages > code.info {
+  background-color: #e5e5e5;
+  border-left: 0.2rem solid #4777ff;
+}
+
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.info {
+  background: none;
+  border: none;
+}
+
+.hl.lean div.docstring {
+  font-family: sans-serif;
+  white-space: normal;
+  max-width: 40rem;
+  width: max-content;
+}
+
+.hl.lean div.docstring > :last-child {
+  margin-bottom: 0;
+}
+
+.hl.lean div.docstring > :first-child {
+  margin-top: 0;
+}
+
+.hl.lean .hover-info .sep {
+  display: block;
+  width: auto;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+  height: 1px;
+  border-top: 1px solid #ccc;
+}
+
+.hl.lean code {
+  font-family: monospace;
+}
+
+.hl.lean .tactic-state {
+  display: none;
+  position: relative;
+  width: fit-content;
+  border: 1px solid #888888;
+  border-radius: 0.1rem;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.hl.lean.popup .tactic-state {
+  position: static;
+  display: block;
+  width: auto;
+  border: none;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+
+.hl.lean .tactic {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr;
+  vertical-align: top;
+}
+
+.hl.lean .tactic-toggle:checked ~ .tactic-state {
+  display: inline-block;
+  vertical-align: top;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.hl.lean .tactic > label {
+  position: relative;
+  grid-row: 1;
+}
+
+@media (hover: hover) {
+  .hl.lean .tactic:has(.tactic-toggle:not(:checked)) > label:hover {
+    background-color: #eeeeee;
+  }
+}
+
+.hl.lean .tactic-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .tactic > label::after {
+  content: "";
+  border: 1px solid #bbbbbb;
+  border-radius: 1rem;
+  height: 0.25rem;
+  vertical-align: middle;
+  width: 0.6rem;
+  margin-left: 0.1rem;
+  margin-right: 0.1rem;
+  display: inline-block;
+  transition: all 0.5s;
+}
+
+/*
+@media (hover: hover) {
+  .hl.lean .tactic > label:hover::after {
+    border: 1px solid #aaaaaa;
+    background-color: #aaaaaa;
+    transition: all 0.5s;
+  }
+}
+*/
+
+.hl.lean .tactic > label:has(+ .tactic-toggle:checked)::after {
+  border: 1px solid #999999;
+  background-color: #999999;
+  transition: all 0.5s;
+}
+
+.hl.lean .tactic-state .goal + .goal {
+  margin-top: 1.5rem;
+}
+
+.hl.lean .tactic-state summary {
+  margin-left: -0.5rem;
+}
+
+.hl.lean .tactic-state details {
+  padding-left: 0.5rem;
+}
+
+.hl.lean .case-label {
+  display: block;
+  position: relative;
+}
+
+.hl.lean .case-label input[type="checkbox"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -10;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"])::before {
+  width: 1rem;
+  height: 1rem;
+  display: inline-block;
+  background-color: black;
+  content: ' ';
+  transition: ease 0.2s;
+  margin-right: 0.7rem;
+  clip-path: polygon(100% 0, 0 0, 50% 100%);
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
+  transform: rotate(-90deg);
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]) {
+
+}
+
+.hl.lean .case-label:has(input[type="checkbox"]:checked) {
+
+}
+
+
+.hl.lean .tactic-state .labeled-case > :not(:first-child) {
+  max-height: 0px;
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.1s ease-in;
+  margin-left: 0.5rem;
+  margin-top: 0.1rem;
+}
+
+.hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
+  max-height: 100%;
+}
+
+
+.hl.lean .tactic-state .goal-name::before {
+  font-style: normal;
+  content: "case ";
+}
+
+.hl.lean .tactic-state .goal-name {
+  font-style: italic;
+  font-family: monospace;
+}
+
+.hl.lean .tactic-state .hypotheses {
+  display: table;
+}
+
+.hl.lean .tactic-state .hypothesis {
+  display: table-row;
+}
+
+.hl.lean .tactic-state .hypothesis > * {
+  display: table-cell;
+}
+
+
+.hl.lean .tactic-state .hypotheses .colon {
+  text-align: center;
+  min-width: 1rem;
+}
+
+.hl.lean .tactic-state .hypotheses .name {
+  text-align: right;
+}
+
+.hl.lean .tactic-state .hypotheses .name,
+.hl.lean .tactic-state .hypotheses .type,
+.hl.lean .tactic-state .conclusion .type {
+  font-family: monospace;
+}
+
+.tippy-box[data-theme~='lean'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='lean'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+}
+.tippy-box[data-theme~='lean'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: #e5e5e5;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='top'] > .tippy-arrow::after {
+  bottom: -11px;
+  border-width: 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='bottom'] > .tippy-arrow::after {
+  top: -11px;
+  border-width: 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: #e5e5e5;
+  border-width: 11px 0 11px 11px;
+}
+.tippy-box[data-theme~='message'][data-placement^='left'] > .tippy-arrow::after {
+  right: -11px;
+  border-width: 11px 0 11px 11px;
+}
+
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: #e5e5e5;
+  border-width: 11px 11px 11px 0;
+}
+.tippy-box[data-theme~='message'][data-placement^='right'] > .tippy-arrow::after {
+  left: -11px;
+  border-width: 11px 11px 11px 0;
+}
+
+
+
+.tippy-box[data-theme~='warning'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid var(--verso-warning-color);
+}
+
+.tippy-box[data-theme~='error'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #f7a7af;
+}
+
+.tippy-box[data-theme~='info'] {
+  background-color: #e5e5e5;
+  color: black;
+  border: 3px solid #99b3c2;
+}
+
+.tippy-box[data-theme~='tactic'] {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: white;
+}
+.tippy-box[data-theme~='tactic'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: white;
+}
+
+.extra-doc-links {
+  list-style-type: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.extra-doc-links > li {
+  display: inline-block;
+}
+
+.extra-doc-links > li:not(:last-child)::after {
+  content: '|';
+  display: inline-block;
+  margin: 0 0.25em;
+}
+</style><script>
+      
+window.onload = () => {
+
+    // Don't show hovers inside of closed tactic states
+    function blockedByTactic(elem) {
+      let parent = elem.parentNode;
+      while (parent && "classList" in parent) {
+        if (parent.classList.contains("tactic")) {
+          const toggle = parent.querySelector("input.tactic-toggle");
+          if (toggle) {
+            return !toggle.checked;
+          }
+        }
+        parent = parent.parentNode;
+      }
+      return false;
+    }
+
+    function blockedByTippy(elem) {
+      // Don't show a new hover until the old ones are all closed.
+      // Scoped to the nearest "top-level block" to avoid being O(n) in the size of the document.
+      var block = elem;
+      const topLevel = new Set(["section", "body", "html", "nav", "header"]);
+      while (block.parentNode && !topLevel.has(block.parentNode.nodeName.toLowerCase())) {
+        block = block.parentNode;
+      }
+      for (const child of block.querySelectorAll(".token, .has-info")) {
+        if (child._tippy && child._tippy.state.isVisible) { return true };
+      }
+      return false;
+    }
+
+    for (const c of document.querySelectorAll(".hl.lean .token")) {
+        if (c.dataset.binding != "") {
+            c.addEventListener("mouseover", (event) => {
+                if (blockedByTactic(c)) {return;}
+                const context = c.closest(".hl.lean").dataset.leanContext;
+                for (const example of document.querySelectorAll(".hl.lean")) {
+                    if (example.dataset.leanContext == context) {
+                        for (const tok of example.querySelectorAll(".token")) {
+                            if (c.dataset.binding == tok.dataset.binding) {
+                                tok.classList.add("binding-hl");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        c.addEventListener("mouseout", (event) => {
+            for (const tok of document.querySelectorAll(".hl.lean .token")) {
+                tok.classList.remove("binding-hl");
+            }
+        });
+    }
+    /* Render docstrings */
+    if ('undefined' !== typeof marked) {
+        for (const d of document.querySelectorAll("code.docstring, pre.docstring")) {
+            const str = d.innerText;
+            const html = marked.parse(str);
+            const rendered = document.createElement("div");
+            rendered.classList.add("docstring");
+            rendered.innerHTML = html;
+            d.parentNode.replaceChild(rendered, d);
+        }
+    }
+    // Add hovers
+    let siteRoot = typeof __versoSiteRoot !== 'undefined' ? __versoSiteRoot : "/";
+    let docsJson = siteRoot + "-verso-docs.json";
+    fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
+
+      function hideParentTooltips(element) {
+        let parent = element.parentElement;
+        while (parent) {
+          const tippyInstance = parent._tippy;
+          if (tippyInstance) {
+            tippyInstance.hide();
+          }
+          parent = parent.parentElement;
+        }
+      }
+
+
+
+      const defaultTippyProps = {
+        /* DEBUG -- remove the space: * /
+        onHide(any) { return false; },
+        trigger: "click",
+        // */
+        /* theme: "lean", */
+        maxWidth: "none",
+        appendTo: () => document.body,
+        interactive: true,
+        delay: [100, null],
+        /* ignoreAttributes: true, */
+        followCursor: 'initial',
+        onShow(inst) {
+          if (inst.reference.className == 'tactic') {
+
+            const toggle = inst.reference.querySelector("input.tactic-toggle");
+            if (toggle && toggle.checked) {
+              return false;
+            }
+            hideParentTooltips(inst.reference);
+            //if (blockedByTippy(inst.reference)) { return false; }
+
+          } else if (inst.reference.querySelector(".hover-info") || "versoHover" in inst.reference.dataset) {
+            if (blockedByTactic(inst.reference)) { return false };
+            if (blockedByTippy(inst.reference)) { return false; }
+          } else { // Nothing to show here!
+            return false;
+          }
+        },
+        content (tgt) {
+          const content = document.createElement("span");
+          if (tgt.className == 'tactic') {
+            const state = tgt.querySelector(".tactic-state").cloneNode(true);
+            state.style.display = "block";
+            content.appendChild(state);
+            content.style.display = "block";
+            content.className = "hl lean popup";
+          } else {
+            content.className = "hl lean";
+            content.style.display = "block";
+            content.style.maxHeight = "300px";
+            content.style.overflowY = "auto";
+            content.style.overflowX = "hidden";
+            const hoverId = tgt.dataset.versoHover;
+            const hoverInfo = tgt.querySelector(".hover-info");
+            if (hoverId) { // Docstrings from the table
+              // TODO stop doing an implicit conversion from string to number here
+              let data = versoDocData[hoverId];
+              if (data) {
+                const info = document.createElement("span");
+                info.className = "hover-info";
+                info.style.display = "block";
+                info.innerHTML = data;
+                content.appendChild(info);
+                /* Render docstrings - TODO server-side */
+                if ('undefined' !== typeof marked) {
+                    for (const d of content.querySelectorAll("code.docstring, pre.docstring")) {
+                        const str = d.innerText;
+                        const html = marked.parse(str);
+                        const rendered = document.createElement("div");
+                        rendered.classList.add("docstring");
+                        rendered.innerHTML = html;
+                        d.parentNode.replaceChild(rendered, d);
+                    }
+                }
+              } else {
+                content.innerHTML = "Failed to load doc ID: " + hoverId;
+              }
+            } else if (hoverInfo) { // The inline info, still used for compiler messages
+              content.appendChild(hoverInfo.cloneNode(true));
+            }
+            const extraLinks = tgt.parentElement.dataset['versoLinks'];
+            if (extraLinks) {
+              try {
+                const extras = JSON.parse(extraLinks);
+                const links = document.createElement('ul');
+                links.className = 'extra-doc-links';
+                extras.forEach((l) => {
+                  const li = document.createElement('li');
+                  li.innerHTML = "<a href=\"" + l['href'] + "\" title=\"" + l.long + "\">" + l.short + "</a>";
+                  links.appendChild(li);
+                });
+                content.appendChild(links);
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }
+          return content;
+        }
+      };
+
+
+      document.querySelectorAll('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'lean');
+      });
+      document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'warning message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.info').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'info message');
+      });
+      document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'error message');
+      });
+      document.querySelectorAll('.hl.lean .tactic').forEach(element => {
+        element.setAttribute('data-tippy-theme', 'tactic');
+      });
+      let insts = tippy('.hl.lean .const.token, .hl.lean .keyword.token, .hl.lean .literal.token, .hl.lean .option.token, .hl.lean .var.token, .hl.lean .typed.token, .hl.lean .has-info, .hl.lean .tactic, .hl.lean .level-var, .hl.lean .level-const, .hl.lean .level-op, .hl.lean .sort', defaultTippyProps);
+  });
+}
+</script>
+    <link rel="icon" type="image/x-icon" href="static/favicon.svg">
+    <script src="static/scripts.js"></script>
+    </head>
+  <body>
+    <header>
+      <div class="header-logo-wrapper"></div>
+      <div class="header-title-wrapper">
+        <a href="" class="header-title"><h1>
+            Probability in Mathlib</h1>
+          </a></div>
+      </header>
+    <label for="toggle-toc" id="toggle-toc-click"><span class="line line1"></span><span class="line line2"></span><span class="line line3"></span></label><div class="with-toc">
+      <div class="toc-backdrop" onclick="document.getElementById('toggle-toc-click')?.click()"></div>
+      <nav id="toc">
+        <input type="checkbox" id="toggle-toc"><div class="first">
+          <a href="" class="toc-title"><h1>
+              Probability in Mathlib</h1>
+            </a><div class="split-tocs">
+            <div class="split-toc book">
+              <div class="title">
+                <label for="--verso-manual-toc-----bookRoot" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-----bookRoot" checked="checked"></label><span class="">Table of Contents</span></div>
+              <table><tr class="numbered"><td class="num">1.</td><td><a href="Probability-spaces-and-probability-measures/#Probability-in-Mathlib--Probability-spaces-and-probability-measures">Probability spaces and probability measures</a></td></tr><tr class="numbered"><td class="num">2.</td><td><a href="Martingales/#Probability-in-Mathlib--Martingales">Martingales</a></td></tr><tr class="current numbered"><td class="num">3.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions">Various probability definitions</a></td></tr></table></div>
+            <div class="split-toc">
+              <div class="title">
+                <label for="--verso-manual-toc-Probability-in-Mathlib--Various-probability-definitions" class="toggle-split-toc"><input type="checkbox" class="toggle-split-toc" id="--verso-manual-toc-Probability-in-Mathlib--Various-probability-definitions" checked="checked"></label><span class="number">3.</span> <span class="current"><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions">Various probability definitions</a></span></div>
+              <table><tr class="numbered"><td class="num">3.1.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--CDF___-pdf___-variance___-moments">CDF, pdf, variance, moments</a></td></tr><tr class="numbered"><td class="num">3.2.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--Known-probability-distributions">Known probability distributions</a></td></tr><tr class="numbered"><td class="num">3.3.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--Identically-distributed">Identically distributed</a></td></tr><tr class="numbered"><td class="num">3.4.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--Conditioning">Conditioning</a></td></tr><tr class="numbered"><td class="num">3.5.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--Independence">Independence</a></td></tr><tr class="numbered"><td class="num">3.6.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--Stochastic-processes___-filtrations___-martingales">Stochastic processes, filtrations, martingales</a></td></tr><tr class="numbered"><td class="num">3.7.</td><td><a href="Various-probability-definitions/#Probability-in-Mathlib--Various-probability-definitions--Transition-kernels">Transition kernels</a></td></tr></table></div>
+            </div>
+          </div>
+        <div class="last">
+          <ul id="meta-links">
+            <li>
+              <a href="https://github.com/RemyDegenne/demo-martingales">Source Code</a></li>
+            <li>
+              <a href="https://github.com/RemyDegenne/demo-martingales/issues">Report Issues</a></li>
+            </ul>
+          </div>
+        </nav>
+      <main><div class="content-wrapper">
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Martingales/#Probability-in-Mathlib--Martingales" rel="prev" title="2. Martingales"><span class="arrow">←</span><span class="where">2. Martingales</span></a><div></div>
+            </nav>
+          <section>
+            <h1>
+              3. Various probability definitions</h1>
+            <p>
+              This section contains pointers to the Mathlib definitions for several probability objects.
+That list might be out of date when you read this! Look around in the <a href="https://leanprover-community.github.io/mathlib4_docs/">documentation</a>.</p>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--CDF___-pdf___-variance___-moments">
+                3.1. CDF, pdf, variance, moments</h2>
+              <p>
+                Here is a list of common concepts about real probability distributions.</p>
+              <ul>
+                <li>
+                  <p>
+                    Probability density function of a random variable <code>X : Ω → E</code> in a space with measure <code>P : Measure Ω</code>, with respect to measure <code>Q : Measure E</code>: <code>pdf X P Q</code>.</p>
+                  </li>
+                <li>
+                  <p>
+                    Cumulative distribution function of <code>P : Measure ℝ</code>: <code>cdf P</code>. This is a <code>StieltjesFunction</code>, a monotone right continuous real function.</p>
+                  </li>
+                <li>
+                  <p>
+                    Expectation of <code>X</code> under <code>P</code>: <code>P[X]</code>.</p>
+                  </li>
+                <li>
+                  <p>
+                    Variance: <code>variance X P</code>.</p>
+                  </li>
+                <li>
+                  <p>
+                    Moment of order <code>p</code>: <code>moment X p P</code>.</p>
+                  </li>
+                <li>
+                  <p>
+                    Central moment of order <code>p</code>: <code>centralMoment X p P</code>.</p>
+                  </li>
+                <li>
+                  <p>
+                    Moment generating function of <code>X</code> under <code>P</code> at <code>t : ℝ</code>: <code>mgf X P t</code>.</p>
+                  </li>
+                <li>
+                  <p>
+                    Cumulant generating function: <code>cgf X P t</code>.</p>
+                  </li>
+                </ul>
+              </section>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--Known-probability-distributions">
+                3.2. Known probability distributions</h2>
+              <p>
+                The Probability/Distributions folder of Mathlib contains several common probability laws: Exponential, Gamma, Gaussian (only in <code>ℝ</code>), Geometric, Pareto, Poisson, Uniform.
+Other measures that can be used to build probability distributions are defined elsewhere, in the MeasureTheory folder: counting measure, Dirac, Lebesgue measure.</p>
+              <p>
+                For example, the Gaussian distribution on the real line with mean <code>μ</code> and variance <code>v</code> is a <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span></code>:</p>
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-1033">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.403" data-verso-hover="72">μ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.405" data-verso-hover="44">v</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ≥0</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="const token" data-binding="const-ProbabilityTheory.gaussianReal" data-verso-hover="157">gaussianReal</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.403" data-verso-hover="72">μ</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.405" data-verso-hover="44">v</span></code><p>
+                The definition is followed by an instance <code>IsProbabilityMeasure (gaussianReal μ v)</code> that states that this is a probability measure. It is defined as the Dirac distribution for <code>v = 0</code>.
+The file where the Gaussian is defined also contains properties of its probability density function.</p>
+              <p>
+                As another example, to take the uniform distribution on a finite set <code>s : Set Ω</code>, use <code>uniformOn s : Measure Ω</code>.</p>
+              </section>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--Identically-distributed">
+                3.3. Identically distributed</h2>
+              <p>
+                <code>IdentDistrib X Y P Q</code> (or <code>IdentDistrib X Y</code> in <code>MeasureSpace</code>) states that <code>X</code> and <code>Y</code> are identically distributed.</p>
+              </section>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--Conditioning">
+                3.4. Conditioning</h2>
+              <section>
+                <h3 id="Probability-in-Mathlib--Various-probability-definitions--Conditioning--Conditional-probability">
+                  3.4.1. Conditional probability</h3>
+                <p>
+                  The probability of a set <code>s</code> conditioned on another set <code>t</code> for the measure <code>P</code> is <code>P[s|t]</code>, which equals <code>P (s ∩ t) / P t</code>.
+Conditioning on <code>t</code> defines a new measure named <code>cond P t</code>, denoted by <code>P[|t]</code>. With that notation, <code>P[s|t] = P[|t] s</code>.</p>
+                <p>
+                  For <code>X : Ω → E</code> and <code>x : E</code>, we write <code>P[|X ← x]</code> for the probability measure conditioned on <code>X = x</code>. It is notation for <code>P[|X ⁻¹' {x}]</code>.
+This is meaningful only if <code>X = x</code> has non-zero probability, so that definition is mostly useful for discrete probability.</p>
+                </section>
+              <section>
+                <h3 id="Probability-in-Mathlib--Various-probability-definitions--Conditioning--Conditional-expectation">
+                  3.4.2. Conditional expectation</h3>
+                <p>
+                  The conditional expectation of a random variable <code>Y : Ω → F</code> given a sigma-algebra <code>m</code> of <code>Ω</code> is <code>condexp m P Y</code>, with notation <code>P[Y | m]</code>. This is a random variable <code>Ω → F</code>, and it is <code>m</code>-measurable.
+The conditional expectation of <code>Y</code> given <code>X : Ω → E</code> can be obtained with <code>P[Y | mE.comap X]</code>, in which <code>mE : MeasurableSpace E</code> is the sigma-algebra on <code>E</code>.
+The sigma-algebra <code>mE.comap X</code> (or <code>MeasurableSpace.comap X mE</code>) on <code>Ω</code> is the sigma-algebra generated by <code>X</code>. It is the smallest sigma-algebra for which all the sets <code>X ⁻¹' s</code> are measurable, for <code>s</code> ranging over the measurable sets on <code>E</code>.</p>
+                <p>
+                  We have special notation for the conditional expectation of the real indicator of a set <code>s : Set Ω</code>: <code>P⟦s | m⟧ : Ω → ℝ</code>.</p>
+                </section>
+              <section>
+                <h3 id="Probability-in-Mathlib--Various-probability-definitions--Conditioning--Conditional-probability-distribution">
+                  3.4.3. Conditional probability distribution</h3>
+                <p>
+                  The regular conditional probability distribution of <code>Y : Ω → F</code> given <code>X : Ω → E</code>, for <code>F</code> standard Borel, is denoted by <code>condDistrib Y X P</code> (for a measure <code>P</code> on <code>Ω</code>).
+This is a Markov kernel from <code>E</code> to <code>F</code> (see further down) such that for all measurable sets <code>s</code> of <code>F</code>, for <code>P</code>-almost every <code>ω : Ω</code>, <code>condDistrib Y X P (X ω) s</code> is equal to <code>P⟦Y ⁻¹' s|mE.comap X⟧</code> (up to a mismatch in types: <code>ℝ≥0∞</code> for <code>condDistrib</code> versus <code>ℝ</code> for the conditional expectation of the indicator).</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--Independence">
+                3.5. Independence</h2>
+              <p>
+                Mathlib has several definitions for independence. We can talk about independence of random variables, of sets, of sigma-algebras.
+The definitions also differ depending on whether we consider only two random variables of an indexed family.
+Finally, there are also conditional variants of all those definitions.</p>
+              <section>
+                <h3 id="Probability-in-Mathlib--Various-probability-definitions--Independence--Unconditional-independence">
+                  3.5.1. Unconditional independence</h3>
+                <p>
+                  Two independent random variables can be defined like this:</p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-1155" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.501" data-verso-hover="4">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">}</span><span class="inter-text">
+  </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.505" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.509" data-verso-hover="118">Y</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℕ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.600" data-verso-hover="12">hX</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.505" data-verso-hover="11">X</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.689" data-verso-hover="158">hY</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.509" data-verso-hover="118">Y</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
+  </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.782" data-verso-hover="159">hXY</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-ProbabilityTheory.IndepFun" data-verso-hover="160">IndepFun</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.505" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.509" data-verso-hover="118">Y</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.501" data-verso-hover="4">P</span><span class="unknown token" data-binding="">)</span></code><p>
+                  On a measure space, we can write <code>IndepFun X Y</code> without the measure argument.</p>
+                <p>
+                  For a family <code>X : ι → Ω → ℝ</code> of independent random variables, use <code>iIndepFun</code>.</p>
+                <p>
+                  To express independence of sets, use <code>IndepSet</code> (two sets) and <code>iIndepSet</code> (family of sets). For sigma-algebras, <code>Indep</code> and <code>iIndep</code>.</p>
+                </section>
+              <section>
+                <h3 id="Probability-in-Mathlib--Various-probability-definitions--Independence--Conditional-independence">
+                  3.5.2. Conditional independence</h3>
+                <p>
+                  The way to write that two random variables <code>X : Ω → E</code> and <code>Y : Ω → F</code> are conditionally independent given a sub-sigma-algebra <code>m</code> with respect to the measure <code>P</code> is <code>CondIndepFun m hm X Y P</code>, in which <code>hm : m ≤ mΩ</code> is a proof that <code>m</code> is a sub-sigma-algebra of the sigma-algebra <code>mΩ</code> of <code>Ω</code>.
+We would omit the measure argument in a <code>MeasureSpace</code>.
+That definition requires that <code>Ω</code> be standard Borel space.</p>
+                <p>
+                  To write that <code>X : Ω → E</code> and <code>Y : Ω → F</code> are conditionally independent given a third random variable <code>Z : Ω → G</code> (with measurability assumption <code>hZ : Measurable Z</code>), write that they are independent given the sigma-algebra generated by <code>Z</code>.
+That is, for <code>mG : MeasurableSpace G</code> the sigma-algebra on <code>G</code>, write <code>CondIndepFun (mG.comap Z) hZ.comap_le X Y P</code>.
+As of writing this blog post, there is no shorter spelling of that fact.</p>
+                <p>
+                  For families of functions, use <code>iCondIndepFun</code>.
+For sets, use <code>CondIndepSet</code> (two sets) and <code>iCondIndepSet</code> (family of sets). For sigma-algebras, <code>CondIndep</code> and <code>iCondIndep</code>.</p>
+                </section>
+              </section>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--Stochastic-processes___-filtrations___-martingales">
+                3.6. Stochastic processes, filtrations, martingales</h2>
+              <p>
+                A stochastic process with real values (for example) is a function <code>X : ι → Ω → ℝ</code> from an index set <code>ι</code> to random variables <code>Ω → ℝ</code>.</p>
+              <p>
+                A filtration on the index set can be defined with <code>ℱ : Filtration ι m</code>, in which <code>m</code> is a sigma-algebra on <code>Ω</code>. <code>ℱ</code> is a monotone sequence of sub-sigma-algebras of <code>m</code>. The sigma-algebra at index <code>i</code> is <code>ℱ i</code>.</p>
+              <p>
+                We can state that a process <code>X</code> is adapted to the filtration <code>ℱ</code> with <code>adapted ℱ X</code>.
+We can write that it is a martingale with respect to <code>ℱ</code> and the measure <code>P : Measure Ω</code> with <code>Martingale X ℱ P</code>.</p>
+              <p>
+                A stopping time with respect to a filtration <code>ℱ</code> is a function <code>τ : Ω → ι</code> such that for all <code>i</code>, the preimage of <code>{j | j ≤ i}</code> along <code>τ</code> is measurable with respect to <code>ℱ i</code>.
+<code>IsStoppingTime ℱ τ</code> states that <code>τ</code> is a stopping time.</p>
+              <p>
+                Remark: there is an issue with the current definition of stopping times, which is that if the index set of the filtration <code>ι</code> is the set of natural numbers <code>ℕ</code> then <code>τ</code> has to take values in <code>ℕ</code>. In particular it cannot be infinite.
+That can cause friction with informal stopping times which are often understood to be infinite when they are not well defined.</p>
+              </section>
+            <section>
+              <h2 id="Probability-in-Mathlib--Various-probability-definitions--Transition-kernels">
+                3.7. Transition kernels</h2>
+              <p>
+                A transition kernel <code>κ</code> from a measurable space <code>E</code> to a measurable space <code>F</code> is a measurable function from <code>E</code> to <code>Measure F</code>. That is, for every measurable set <code>s</code> of <code>F</code>, the function <code>fun x ↦ κ x s</code> is measurable.
+Transition kernels are represented in Mathlib by the type <code>Kernel E F</code>.
+A kernel such that all measures in its image are probability measures is called a Markov kernel. This is denoted by <code>IsMarkovKernel κ</code>.
+There are other typeclasses for kernels that are finite (<code>IsFiniteKernel</code>) or s-finite (countable sum of finite, <code>IsSFiniteKernel</code>).</p>
+              <p>
+                Kernels are perhaps more widely used in Mathlib than one would expect. For example independence and conditional independence are both expressed as special cases of a notion of independence with respect to a kernel and a measure.
+</p>
+              </section>
+            </section>
+          <nav class="prev-next-buttons">
+            <a class="local-button active" href="Martingales/#Probability-in-Mathlib--Martingales" rel="prev" title="2. Martingales"><span class="arrow">←</span><span class="where">2. Martingales</span></a><div></div>
+            </nav>
+          </div>
+        </main></div>
+    </body>
+  </html>
+
