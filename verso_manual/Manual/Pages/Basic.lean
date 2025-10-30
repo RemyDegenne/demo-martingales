@@ -46,8 +46,7 @@ Remark 2: a lemma written for `P : Measure Ω` in a `MeasurableSpace Ω` will ap
 Mathlib focuses on generality, hence uses the `MeasurableSpace` spelling for its lemmas. In another context, the convenience of `MeasureSpace` may be preferable.
 
 
-# `IsProbabilityMeasure` vs `ProbabilityMeasure`
-
+Remark 3: `IsProbabilityMeasure` vs `ProbabilityMeasure`.
 The examples above used `{P : Measure Ω} [IsProbabilityMeasure P]` to define a probability measure. That's the standard way to do it.
 Mathlib also contains a type `ProbabilityMeasure Ω`: the subtype of measures that are probability measures.
 The goal of that type is to work on the set of probability measures on `Ω`.
