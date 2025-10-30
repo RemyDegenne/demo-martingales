@@ -1,0 +1,21 @@
+name = "manual"
+version = "0.1.0"
+keywords = ["math"]
+
+[leanOptions]
+autoImplicit = true
+
+[[require]]
+name = "verso"
+git = "https://github.com/leanprover/verso"
+
+[[lean_lib]]
+name = "Manual"
+srcDir = "verso_manual"
+root = "Manual"
+
+
+[[lean_exe]]
+name = "manual"
+srcDir = "verso_manual"
+root = "Manual"

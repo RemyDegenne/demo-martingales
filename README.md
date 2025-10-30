@@ -1,6 +1,6 @@
 # Probability in Mathlib
 
-This repository contains the Lean formalization of the Proposition 3 of the the paper [*_Global optimization of Lipschitz functions, Malherbe C. and Vayatis N., 2017_*](https://proceedings.mlr.press/v70/malherbe17a/malherbe17a.pdf).
+This repository contains an introduction to probability in Lean and Mathlib.
 
 ## Usage
 Install [Lean 4](https://lean-lang.org/install/). Then, clone the repository and run the following command in the root directory:
