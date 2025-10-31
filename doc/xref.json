@@ -2,6 +2,34 @@
  {"title": "Sections or chapters of the manual",
   "description": null,
   "contents": {}},
+ "Verso.Genre.Manual.example":
+ {"title": "Verso.Genre.Manual.example",
+  "description": null,
+  "contents":
+  {"submartingale_iff_expected_stoppedValue_mono'":
+   [{"id": "submartingale_iff_expected_stoppedValue_mono___",
+     "data":
+     {"/Martingales/#submartingale_iff_expected_stoppedValue_mono___":
+      {"display": "submartingale_iff_expected_stoppedValue_mono'",
+       "context": ["Probability in Mathlib", "Martingales", "Stopping times"]}},
+     "address": "/Martingales/"}],
+   "ae_tendsto_limitProcess":
+   [{"id": "ae_tendsto_limitProcess",
+     "data":
+     {"/Martingales/#ae_tendsto_limitProcess":
+      {"display": "ae_tendsto_limitProcess",
+       "context":
+       ["Probability in Mathlib",
+        "Martingales",
+        "Stochastic processes, filtrations, and martingales"]}},
+     "address": "/Martingales/"}],
+   "Submartingale.stoppedProcess":
+   [{"id": "Submartingale___stoppedProcess",
+     "data":
+     {"/Martingales/#Submartingale___stoppedProcess":
+      {"display": "Submartingale.stoppedProcess",
+       "context": ["Probability in Mathlib", "Martingales", "Stopping times"]}},
+     "address": "/Martingales/"}]}},
  "Verso.Genre.Manual.doc.tech":
  {"title": "Terminology",
   "description": "Definitions of technical terms",

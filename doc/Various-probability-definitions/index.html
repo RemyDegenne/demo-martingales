@@ -11,16 +11,19 @@
     <base href="./../"><meta charset="utf-8">
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <title>Various probability definitions</title><link rel="stylesheet" href="book.css">
-    <script>
-      const __versoSiteRoot = document.baseURI;</script>
+    <link rel="stylesheet" href="verso-vars.css">
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
-    <script src="-verso-data/elasticlunr.min.js"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
     <script src="-verso-data/katex/katex.js"></script>
     <script src="-verso-data/katex/math.js"></script>
-    <script src="-verso-data/popper.js"></script>
-    <script src="-verso-data/tippy.js"></script>
-    <script src="-verso-data/searchIndex.js"></script>
-    <link rel="stylesheet" href="static/style.css">
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
     <link rel="stylesheet" href="-verso-data/katex/katex.css">
     <link rel="stylesheet" href="-verso-data/tippy-border.css">
     <style>
@@ -29,15 +32,37 @@
   white-space: pre;
   font-weight: normal;
   font-style: normal;
+  font-size: inherit;
 }
 
 .hl.lean .keyword {
-  font-weight : bold;
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
 }
 
 .hl.lean .var {
-  font-style: italic;
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
   position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
 }
 
 .hover-container {
@@ -67,7 +92,6 @@
   border: 1px solid black;
   padding: 0.5rem;
   z-index: 300;
-  font-size: inherit;
 }
 
 .hl.lean .hover-info.messages {
@@ -81,6 +105,8 @@
 
 .hl.lean .hover-info code {
   white-space: pre-wrap;
+  background: none;
+  color: black;
 }
 
 .hl.lean .hover-info.messages > code {
@@ -101,6 +127,9 @@
   margin-top: 0rem;
 }
 
+.hl.lean {
+}
+
 .hl.lean.block {
   display: block;
 }
@@ -108,6 +137,9 @@
 .hl.lean.inline {
   display: inline;
   white-space: pre-wrap;
+}
+
+.hl.lean * {
 }
 
 .hl.lean .token {
@@ -160,12 +192,16 @@
   border: none;
 }
 
-.error pre {
-    color: red;
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
 }
 
 .hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
-  text-decoration-color: var(--verso-warning-color);
+  text-decoration-color: var(--verso-warning-indicator-color);
 }
 
 @media (hover: hover) {
@@ -176,6 +212,25 @@
 
 .hl.lean .hover-info.messages > code.warning {
   background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
 }
 
 .hl.lean .hover-info.messages > code.error {
@@ -189,31 +244,31 @@
 }
 
 
-.hl.lean .has-info.info :not(.tactic-state):not(.tactic-state *) {
-  text-decoration-color: blue;
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
 }
 
 @media (hover: hover) {
-  .hl.lean .has-info.info:hover {
+  .hl.lean .has-info.information:hover {
     background-color: #4777ff;
   }
 }
 
 
-.hl.lean .hover-info.messages > code.info {
+.hl.lean .hover-info.messages > code.information {
   background-color: #e5e5e5;
   border-left: 0.2rem solid #4777ff;
 }
 
-.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.info {
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
   background: none;
   border: none;
 }
 
 .hl.lean div.docstring {
-  font-family: sans-serif;
+  font-family: var(--verso-text-font-family, sans-serif);
   white-space: normal;
-  max-width: 40rem;
+  max-width: calc(min(40rem, 90vw));
   width: max-content;
 }
 
@@ -238,7 +293,7 @@
 }
 
 .hl.lean code {
-  font-family: monospace;
+  font-family: var(--verso-code-font-family);
 }
 
 .hl.lean .tactic-state {
@@ -265,9 +320,16 @@
 
 .hl.lean .tactic {
   position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
   display: inline-grid;
   grid-template-columns: 1fr;
-  vertical-align: top;
 }
 
 .hl.lean .tactic-toggle:checked ~ .tactic-state {
@@ -280,6 +342,7 @@
 .hl.lean .tactic > label {
   position: relative;
   grid-row: 1;
+  display: inline;
 }
 
 @media (hover: hover) {
@@ -301,12 +364,13 @@
 .hl.lean .tactic > label::after {
   content: "";
   border: 1px solid #bbbbbb;
-  border-radius: 1rem;
-  height: 0.25rem;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
   vertical-align: middle;
-  width: 0.6rem;
-  margin-left: 0.1rem;
-  margin-right: 0.1rem;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
   display: inline-block;
   transition: all 0.5s;
 }
@@ -328,15 +392,60 @@
 }
 
 .hl.lean .tactic-state .goal + .goal {
-  margin-top: 1.5rem;
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
 }
 
 .hl.lean .tactic-state summary {
-  margin-left: -0.5rem;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
 }
 
 .hl.lean .tactic-state details {
-  padding-left: 0.5rem;
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
 }
 
 .hl.lean .case-label {
@@ -355,16 +464,15 @@
 }
 
 .hl.lean .case-label:has(input[type="checkbox"])::before {
-  width: 1rem;
-  height: 1rem;
   display: inline-block;
   background-color: black;
   content: ' ';
   transition: ease 0.2s;
-  margin-right: 0.7rem;
+  margin-right: 0.7em;
   clip-path: polygon(100% 0, 0 0, 50% 100%);
-  width: 0.6rem;
-  height: 0.6rem;
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
 }
 
 .hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
@@ -380,13 +488,14 @@
 }
 
 
-.hl.lean .tactic-state .labeled-case > :not(:first-child) {
+.hl.lean .labeled-case > :not(:first-child) {
   max-height: 0px;
   display: block;
   overflow: hidden;
   transition: max-height 0.1s ease-in;
-  margin-left: 0.5rem;
-  margin-top: 0.1rem;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
 }
 
 .hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
@@ -394,42 +503,51 @@
 }
 
 
-.hl.lean .tactic-state .goal-name::before {
+.hl.lean .goal-name::before {
   font-style: normal;
   content: "case ";
 }
 
-.hl.lean .tactic-state .goal-name {
+.hl.lean .goal-name {
   font-style: italic;
-  font-family: monospace;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
 }
 
-.hl.lean .tactic-state .hypotheses {
+.hl.lean .hypotheses {
   display: table;
 }
 
-.hl.lean .tactic-state .hypothesis {
+.hl.lean .hypothesis {
   display: table-row;
 }
 
-.hl.lean .tactic-state .hypothesis > * {
+.hl.lean .hypothesis > * {
   display: table-cell;
 }
 
 
-.hl.lean .tactic-state .hypotheses .colon {
+.hl.lean .hypotheses .colon {
   text-align: center;
-  min-width: 1rem;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
 }
 
-.hl.lean .tactic-state .hypotheses .name {
+.hl.lean .hypotheses .name {
   text-align: right;
 }
 
-.hl.lean .tactic-state .hypotheses .name,
-.hl.lean .tactic-state .hypotheses .type,
-.hl.lean .tactic-state .conclusion .type {
-  font-family: monospace;
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
 }
 
 .tippy-box[data-theme~='lean'] {
@@ -536,6 +654,40 @@
   display: inline-block;
   margin: 0 0.25em;
 }
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
 </style><script>
       
 window.onload = () => {
@@ -603,8 +755,7 @@ window.onload = () => {
         }
     }
     // Add hovers
-    let siteRoot = typeof __versoSiteRoot !== 'undefined' ? __versoSiteRoot : "/";
-    let docsJson = siteRoot + "-verso-docs.json";
+    let docsJson = "-verso-docs.json";
     fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
 
       function hideParentTooltips(element) {
@@ -719,7 +870,7 @@ window.onload = () => {
       document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
         element.setAttribute('data-tippy-theme', 'warning message');
       });
-      document.querySelectorAll('.hl.lean .has-info.info').forEach(element => {
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
         element.setAttribute('data-tippy-theme', 'info message');
       });
       document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
@@ -734,6 +885,7 @@ window.onload = () => {
 </script>
     <link rel="icon" type="image/x-icon" href="static/favicon.svg">
     <script src="static/scripts.js"></script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
     </head>
   <body>
     <header>
@@ -827,7 +979,7 @@ That list might be out of date when you read this! Look around in the <a href="h
 Other measures that can be used to build probability distributions are defined elsewhere, in the MeasureTheory folder: counting measure, Dirac, Lebesgue measure.</p>
               <p>
                 For example, the Gaussian distribution on the real line with mean <code>μ</code> and variance <code>v</code> is a <code class="hl lean inline" data-lean-context="examples"><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span></code>:</p>
-              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-1033">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.403" data-verso-hover="71">μ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.405" data-verso-hover="43">v</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ≥0</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="const token" data-binding="const-ProbabilityTheory.gaussianReal" data-verso-hover="156">gaussianReal</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.403" data-verso-hover="71">μ</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.405" data-verso-hover="43">v</span></code><p>
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-1035">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.373" data-verso-hover="74">μ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.375" data-verso-hover="43">v</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ≥0</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="const token" data-binding="const-ProbabilityTheory.gaussianReal" data-verso-hover="174">gaussianReal</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.373" data-verso-hover="74">μ</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.375" data-verso-hover="43">v</span></code><p>
                 The definition is followed by an instance <code>IsProbabilityMeasure (gaussianReal μ v)</code> that states that this is a probability measure. It is defined as the Dirac distribution for <code>v = 0</code>.
 The file where the Gaussian is defined also contains properties of its probability density function.</p>
               <p>
@@ -882,9 +1034,9 @@ Finally, there are also conditional variants of all those definitions.</p>
                   3.5.1. Unconditional independence</h3>
                 <p>
                   Two independent random variables can be defined like this:</p>
-                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-1155" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.501" data-verso-hover="4">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">}</span><span class="inter-text">
-  </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.505" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.509" data-verso-hover="117">Y</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.486" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℕ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.600" data-verso-hover="12">hX</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.505" data-verso-hover="11">X</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.689" data-verso-hover="157">hY</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.509" data-verso-hover="117">Y</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
-  </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.782" data-verso-hover="158">hXY</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-ProbabilityTheory.IndepFun" data-verso-hover="159">IndepFun</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.505" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.509" data-verso-hover="117">Y</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.501" data-verso-hover="4">P</span><span class="unknown token" data-binding="">)</span></code><p>
+                <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-1157" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.455" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.455" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.466" data-verso-hover="4">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.455" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">}</span><span class="inter-text">
+  </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.470" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.455" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.474" data-verso-hover="175">Y</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.455" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℕ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.569" data-verso-hover="12">hX</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.470" data-verso-hover="11">X</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.660" data-verso-hover="176">hY</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.474" data-verso-hover="175">Y</span><span class="unknown token" data-binding="">)</span><span class="inter-text">
+  </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.753" data-verso-hover="177">hXY</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-ProbabilityTheory.IndepFun" data-verso-hover="178">IndepFun</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.470" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.474" data-verso-hover="175">Y</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.466" data-verso-hover="4">P</span><span class="unknown token" data-binding="">)</span></code><p>
                   On a measure space, we can write <code>IndepFun X Y</code> without the measure argument.</p>
                 <p>
                   For a family <code>X : ι → Ω → ℝ</code> of independent random variables, use <code>iIndepFun</code>.</p>

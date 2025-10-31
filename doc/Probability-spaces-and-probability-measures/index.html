@@ -11,16 +11,19 @@
     <base href="./../"><meta charset="utf-8">
     <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <title>Probability spaces and probability measures</title><link rel="stylesheet" href="book.css">
-    <script>
-      const __versoSiteRoot = document.baseURI;</script>
+    <link rel="stylesheet" href="verso-vars.css">
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js" integrity="sha384-zbcZAIxlvJtNE3Dp5nxLXdXtXyxwOdnILY1TDPVmKFhl4r4nSUG1r8bcFXGVa4Te" crossorigin="anonymous"></script>
-    <script src="-verso-data/elasticlunr.min.js"></script>
+    <script src="-verso-search/elasticlunr.min.js"></script>
+    <script src="-verso-search/fuzzysort.js"></script>
+    <script src="-verso-search/searchIndex.js"></script>
+    <script type="module" src="-verso-search/search-init.js"></script>
+    <link rel="stylesheet" href="-verso-search/search-box.css">
+    <link rel="stylesheet" href="-verso-search/search-highlight.css">
+    <link rel="stylesheet" href="-verso-search/domain-display.css">
     <script src="-verso-data/katex/katex.js"></script>
     <script src="-verso-data/katex/math.js"></script>
-    <script src="-verso-data/popper.js"></script>
-    <script src="-verso-data/tippy.js"></script>
-    <script src="-verso-data/searchIndex.js"></script>
-    <link rel="stylesheet" href="static/style.css">
+    <script src="-verso-data/popper.min.js"></script>
+    <script src="-verso-data/tippy-bundle.umd.min.js"></script>
     <link rel="stylesheet" href="-verso-data/katex/katex.css">
     <link rel="stylesheet" href="-verso-data/tippy-border.css">
     <style>
@@ -29,15 +32,37 @@
   white-space: pre;
   font-weight: normal;
   font-style: normal;
+  font-size: inherit;
 }
 
 .hl.lean .keyword {
-  font-weight : bold;
+  color: var(--verso-code-keyword-color,);
+  font-weight: var(--verso-code-keyword-weight, bold);
+  font-style: var(--verso-code-keyword-style, normal);
+  font-family: var(--verso-code-keyword-font-family,);
+}
+
+.hl.lean .const {
+  color: var(--verso-code-const-color,);
+  font-weight: var(--verso-code-const-weight, normal);
+  font-style: var(--verso-code-const-style, normal);
+  font-family: var(--verso-code-const-font-family,);
 }
 
 .hl.lean .var {
-  font-style: italic;
+  color: var(--verso-code-var-color,);
+  font-weight: var(--verso-code-var-weight, normal);
+  font-style: var(--verso-code-var-style, italic);
+  font-family: var(--verso-code-var-font-family,);
+
   position: relative;
+}
+
+.hl.lean .literal, .hl.lean .unknown {
+  color: var(--verso-code-color,);
+  font-weight: normal;
+  font-style: normal;
+  font-family: var(--verso-code-font-family,);
 }
 
 .hover-container {
@@ -67,7 +92,6 @@
   border: 1px solid black;
   padding: 0.5rem;
   z-index: 300;
-  font-size: inherit;
 }
 
 .hl.lean .hover-info.messages {
@@ -81,6 +105,8 @@
 
 .hl.lean .hover-info code {
   white-space: pre-wrap;
+  background: none;
+  color: black;
 }
 
 .hl.lean .hover-info.messages > code {
@@ -101,6 +127,9 @@
   margin-top: 0rem;
 }
 
+.hl.lean {
+}
+
 .hl.lean.block {
   display: block;
 }
@@ -108,6 +137,9 @@
 .hl.lean.inline {
   display: inline;
   white-space: pre-wrap;
+}
+
+.hl.lean * {
 }
 
 .hl.lean .token {
@@ -160,12 +192,16 @@
   border: none;
 }
 
-.error pre {
-    color: red;
+.error .verso-message, .error .verso-message .token, .error .verso-message label {
+  color: var(--verso-error-color);
+}
+
+.error .verso-message .case-label:has(input[type="checkbox"])::before {
+  background-color: var(--verso-error-color) !important;
 }
 
 .hl.lean .has-info.warning :not(.tactic-state):not(.tactic-state *) {
-  text-decoration-color: var(--verso-warning-color);
+  text-decoration-color: var(--verso-warning-indicator-color);
 }
 
 @media (hover: hover) {
@@ -176,6 +212,25 @@
 
 .hl.lean .hover-info.messages > code.warning {
   background-color: var(--verso-warning-color);
+}
+
+.lean-output {
+  border-left: 0.2em solid transparent;
+  padding: 0 0 0 0.5em;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.lean-output.error {
+  border-color: var(--verso-error-indicator-color);
+}
+
+.lean-output.information {
+  border-color: var(--verso-info-indicator-color);
+}
+
+.lean-output.warning {
+  border-color: var(--verso-warning-indicator-color);
 }
 
 .hl.lean .hover-info.messages > code.error {
@@ -189,31 +244,31 @@
 }
 
 
-.hl.lean .has-info.info :not(.tactic-state):not(.tactic-state *) {
-  text-decoration-color: blue;
+.hl.lean .has-info.information :not(.tactic-state):not(.tactic-state *) {
+  text-decoration-color: var(--verso-info-indicator-color, blue);
 }
 
 @media (hover: hover) {
-  .hl.lean .has-info.info:hover {
+  .hl.lean .has-info.information:hover {
     background-color: #4777ff;
   }
 }
 
 
-.hl.lean .hover-info.messages > code.info {
+.hl.lean .hover-info.messages > code.information {
   background-color: #e5e5e5;
   border-left: 0.2rem solid #4777ff;
 }
 
-.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.info {
+.tippy-box[data-theme~='info'] .hl.lean .hover-info.messages > code.information {
   background: none;
   border: none;
 }
 
 .hl.lean div.docstring {
-  font-family: sans-serif;
+  font-family: var(--verso-text-font-family, sans-serif);
   white-space: normal;
-  max-width: 40rem;
+  max-width: calc(min(40rem, 90vw));
   width: max-content;
 }
 
@@ -238,7 +293,7 @@
 }
 
 .hl.lean code {
-  font-family: monospace;
+  font-family: var(--verso-code-font-family);
 }
 
 .hl.lean .tactic-state {
@@ -265,9 +320,16 @@
 
 .hl.lean .tactic {
   position: relative;
+  display: inline;
+  vertical-align: top;
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.hl.lean .tactic:has(.tactic-toggle:checked) {
   display: inline-grid;
   grid-template-columns: 1fr;
-  vertical-align: top;
 }
 
 .hl.lean .tactic-toggle:checked ~ .tactic-state {
@@ -280,6 +342,7 @@
 .hl.lean .tactic > label {
   position: relative;
   grid-row: 1;
+  display: inline;
 }
 
 @media (hover: hover) {
@@ -301,12 +364,13 @@
 .hl.lean .tactic > label::after {
   content: "";
   border: 1px solid #bbbbbb;
-  border-radius: 1rem;
-  height: 0.25rem;
+  /* These need to be em, not rem, to scale with the font */
+  border-radius: 1em;
+  height: 0.25em;
   vertical-align: middle;
-  width: 0.6rem;
-  margin-left: 0.1rem;
-  margin-right: 0.1rem;
+  width: 0.6em;
+  margin-left: 0.1em;
+  margin-right: 0.1em;
   display: inline-block;
   transition: all 0.5s;
 }
@@ -328,15 +392,60 @@
 }
 
 .hl.lean .tactic-state .goal + .goal {
-  margin-top: 1.5rem;
+  margin-top: 1.5em;
+}
+
+/*
+Some CSS frameworks customize details/summary in ways not compatible with Verso's output.
+*/
+
+.hl.lean details {
+  display: block !important;
+  margin: 0;
+}
+
+.hl.lean details summary {
+  display: list-item !important;
+  margin: 0;
+}
+
+.hl.lean details summary:focus {
+  outline: none;
+  outline-offset: none;
+  color: inherit;
+}
+
+.hl.lean ul > li {
+  margin-bottom: 0;
+}
+
+.hl.lean details summary::marker {
+  display: inline !important;
+}
+
+.hl.lean details > summary:first-of-type {
+  list-style-type: disclosure-closed;
+  list-style-position: inside;
+}
+
+.hl.lean details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}
+
+.hl.lean details summary::before, .hl.lean details summary::after {
+  content: "" !important;
+  background: none;
+  display: none;
 }
 
 .hl.lean .tactic-state summary {
-  margin-left: -0.5rem;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: -0.5em;
 }
 
 .hl.lean .tactic-state details {
-  padding-left: 0.5rem;
+  /* These need to be em, not rem, to scale with the font */
+  padding-left: 0.5em;
 }
 
 .hl.lean .case-label {
@@ -355,16 +464,15 @@
 }
 
 .hl.lean .case-label:has(input[type="checkbox"])::before {
-  width: 1rem;
-  height: 1rem;
   display: inline-block;
   background-color: black;
   content: ' ';
   transition: ease 0.2s;
-  margin-right: 0.7rem;
+  margin-right: 0.7em;
   clip-path: polygon(100% 0, 0 0, 50% 100%);
-  width: 0.6rem;
-  height: 0.6rem;
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: middle;
 }
 
 .hl.lean .case-label:has(input[type="checkbox"]:not(:checked))::before {
@@ -380,13 +488,14 @@
 }
 
 
-.hl.lean .tactic-state .labeled-case > :not(:first-child) {
+.hl.lean .labeled-case > :not(:first-child) {
   max-height: 0px;
   display: block;
   overflow: hidden;
   transition: max-height 0.1s ease-in;
-  margin-left: 0.5rem;
-  margin-top: 0.1rem;
+  /* These need to be em, not rem, to scale with the font */
+  margin-left: 0.5em;
+  margin-top: 0.1em;
 }
 
 .hl.lean .labeled-case:has(.case-label input[type="checkbox"]:checked) > :not(:first-child) {
@@ -394,42 +503,51 @@
 }
 
 
-.hl.lean .tactic-state .goal-name::before {
+.hl.lean .goal-name::before {
   font-style: normal;
   content: "case ";
 }
 
-.hl.lean .tactic-state .goal-name {
+.hl.lean .goal-name {
   font-style: italic;
-  font-family: monospace;
+  font-family: var(--verso-code-font-family);
+  color: inherit;
 }
 
-.hl.lean .tactic-state .hypotheses {
+.hl.lean .hypotheses {
   display: table;
 }
 
-.hl.lean .tactic-state .hypothesis {
+.hl.lean .hypothesis {
   display: table-row;
 }
 
-.hl.lean .tactic-state .hypothesis > * {
+.hl.lean .hypothesis > * {
   display: table-cell;
 }
 
 
-.hl.lean .tactic-state .hypotheses .colon {
+.hl.lean .hypotheses .colon {
   text-align: center;
-  min-width: 1rem;
+  /* This needs to be em, not rem, to scale with the font */
+  min-width: 1em;
 }
 
-.hl.lean .tactic-state .hypotheses .name {
+.hl.lean .hypotheses .name {
   text-align: right;
 }
 
-.hl.lean .tactic-state .hypotheses .name,
-.hl.lean .tactic-state .hypotheses .type,
-.hl.lean .tactic-state .conclusion .type {
-  font-family: monospace;
+.hl.lean .hypotheses .name,
+.hl.lean .hypotheses .type,
+.hl.lean .conclusion .type {
+  font-family: var(--verso-code-font-family);
+}
+
+.tippy-box {
+  /* Without these, mobile Safari will start making font sizes inconsistent when its text size adjustment feature is triggered.*/
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
 }
 
 .tippy-box[data-theme~='lean'] {
@@ -536,6 +654,40 @@
   display: inline-block;
   margin: 0 0.25em;
 }
+
+.verso-message .trace {
+  display: block;
+}
+
+.verso-message .trace > summary::marker {
+  color: var(--verso-text-color);
+}
+
+.verso-message .trace-children {
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .trace-children > li {
+  list-style-type: none;
+  margin-left: 1.5em;
+}
+
+.verso-message .trace-children > li:not(:has(.trace)) {
+  margin-left: 0;
+}
+
+.verso-message .trace-class {
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.verso-message .text {
+  white-space: pre-wrap;
+}
+
 </style><script>
       
 window.onload = () => {
@@ -603,8 +755,7 @@ window.onload = () => {
         }
     }
     // Add hovers
-    let siteRoot = typeof __versoSiteRoot !== 'undefined' ? __versoSiteRoot : "/";
-    let docsJson = siteRoot + "-verso-docs.json";
+    let docsJson = "-verso-docs.json";
     fetch(docsJson).then((resp) => resp.json()).then((versoDocData) => {
 
       function hideParentTooltips(element) {
@@ -719,7 +870,7 @@ window.onload = () => {
       document.querySelectorAll('.hl.lean .has-info.warning').forEach(element => {
         element.setAttribute('data-tippy-theme', 'warning message');
       });
-      document.querySelectorAll('.hl.lean .has-info.info').forEach(element => {
+      document.querySelectorAll('.hl.lean .has-info.information').forEach(element => {
         element.setAttribute('data-tippy-theme', 'info message');
       });
       document.querySelectorAll('.hl.lean .has-info.error').forEach(element => {
@@ -734,6 +885,7 @@ window.onload = () => {
 </script>
     <link rel="icon" type="image/x-icon" href="static/favicon.svg">
     <script src="static/scripts.js"></script>
+    <script src="-verso-search/search-highlight.js" defer="defer"></script>
     </head>
   <body>
     <header>
@@ -779,17 +931,17 @@ window.onload = () => {
               First, in order to work on probability we need a measurable space.
 We can define a probability measure on such a space as follows.</p>
             <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-297" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.3" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text">
-  </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.18" data-verso-hover="4">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.IsProbabilityMeasure" data-verso-hover="6">IsProbabilityMeasure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.18" data-verso-hover="4">P</span><span class="unknown token" data-binding="">]</span></code><p>
+  </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.14" data-verso-hover="4">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.3" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.IsProbabilityMeasure" data-verso-hover="6">IsProbabilityMeasure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.14" data-verso-hover="4">P</span><span class="unknown token" data-binding="">]</span></code><p>
               The class <code>MeasurableSpace Ω</code> defines a sigma-algebra on <code>Ω</code>. We then introduced a measure <code>P</code> on that sigma-algebra and specified that it should be a probability measure.
 If we want to work on <code>ℝ</code> or another well known type the typeclass inference system will find <code>[MeasurableSpace ℝ]</code> on its own. We can write simply</p>
-            <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-431" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.36" data-verso-hover="7">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.IsProbabilityMeasure" data-verso-hover="6">IsProbabilityMeasure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.36" data-verso-hover="7">P</span><span class="unknown token" data-binding="">]</span></code><p>
+            <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-431" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.29" data-verso-hover="7">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.IsProbabilityMeasure" data-verso-hover="6">IsProbabilityMeasure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.29" data-verso-hover="7">P</span><span class="unknown token" data-binding="">]</span></code><p>
               With the code above, we can introduce several probability measures on the same space. When using lemmas and definitions about those measures, we will need to specify which measure we are talking about.
 For example, the variance of a random variable <code>X</code> with respect to the measure <code>P</code> will be <code>variance X P</code>.</p>
             <p>
               But perhaps we just want a space with a canonical probability measure, which would be the one used without us having to tell Lean explicitly.
 That can be done with the <code>MeasureSpace</code> class. A <code>MeasureSpace</code> is a <code>MeasurableSpace</code> with a canonical measure called <code>volume</code>.
 The probability library of Mathlib defines a notation <code>ℙ</code> for that measure. We still need to tell that we want it to be a probability measure though.</p>
-            <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-532" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.48" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.MeasureSpace" data-verso-hover="8">MeasureSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.48" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.IsProbabilityMeasure" data-verso-hover="6">IsProbabilityMeasure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">ℙ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.48" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">)</span><span class="unknown token" data-binding="">]</span></code><p>
+            <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-532" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.39" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.MeasureSpace" data-verso-hover="8">MeasureSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.39" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasureTheory.IsProbabilityMeasure" data-verso-hover="6">IsProbabilityMeasure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="unknown token" data-binding="">ℙ</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.39" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">)</span><span class="unknown token" data-binding="">]</span></code><p>
               Remark 1: in the code above we can't write only <code>[IsProbabilityMeasure ℙ]</code> because Lean would then not know to which space the default measure <code>ℙ</code> refers to.
 That will not be necessary when we use <code>ℙ</code> in proofs because the context will be enough to infer <code>Ω</code>.</p>
             <p>
@@ -809,7 +961,7 @@ If we don't need to work with that topology, <code>{P : Measure Ω} [IsProbabili
                 An event is a measurable set: there is no special event definition in Mathlib.
 The probability of that event is the measure of the set.
 A <code>Measure</code> can be applied to a set like a function and returns a value in <code>ENNReal</code> (denoted by <code>ℝ≥0∞</code>, available after <code>open scoped ENNReal</code>).</p>
-              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-664">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.100" data-verso-hover="7">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.103" data-verso-hover="9">s</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Set" data-verso-hover="10">Set</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ≥0∞</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.100" data-verso-hover="7">P</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.103" data-verso-hover="9">s</span></code><p>
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.example-664">example</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.82" data-verso-hover="7">P</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-MeasureTheory.Measure" data-verso-hover="5">Measure</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.85" data-verso-hover="9">s</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Set" data-verso-hover="10">Set</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">)</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ≥0∞</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:=</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.82" data-verso-hover="7">P</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.85" data-verso-hover="9">s</span></code><p>
                 The probability of the event <code>s</code> is thus <code>P s</code>.
 The type <code>ℝ≥0∞</code> represents the nonnegative reals and infinity: the measure of a set is a nonnegative real number which in general may be infinite.
 If <code>P</code> is a probability measure, it actually takes only values up to 1.
@@ -825,7 +977,7 @@ If one finds that lemma <code>lemma_name</code> used to transform an equation do
                 1.2. Random variables</h2>
               <p>
                 A random variable is a measurable function from a measurable space to another.</p>
-              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-773" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.266" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.266" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.273" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.266" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.372" data-verso-hover="12">hX</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.273" data-verso-hover="11">X</span><span class="unknown token" data-binding="">)</span></code><p>
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-773" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.248" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.248" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.255" data-verso-hover="11">X</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.248" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">→</span><span class="inter-text"> </span><span class="unknown token" data-binding="">ℝ</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">(</span><span class="var token" data-binding="var-_uniq.350" data-verso-hover="12">hX</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="const token" data-binding="const-Measurable" data-verso-hover="13">Measurable</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.255" data-verso-hover="11">X</span><span class="unknown token" data-binding="">)</span></code><p>
                 In that code we defined a random variable <code>X</code> from the measurable space <code>Ω</code> to <code>ℝ</code> (for which the typeclass inference system finds a measurable space instance). The assumption <code>hX</code> states that <code>X</code> is measurable, which is necessary for most manipulations.</p>
               <p>
                 If we define a measure <code>P</code> on <code>Ω</code>, we can talk about the law or distribution of a random variable <code>X : Ω → E</code>.
@@ -863,7 +1015,7 @@ When writing a theorem about probability on finite spaces, it preferable to writ
               <p>
                 Some results in probability theory require the sigma-algebra to be the Borel sigma-algebra, generated by the open sets. For example, with the Borel sigma-algebra the open sets are measurable and continuous functions are measurable.
 For that we first need <code>Ω</code> to be a topological space and we then need to add a <code>[BorelSpace Ω]</code> variable.</p>
-              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-901" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.375" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.375" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-TopologicalSpace" data-verso-hover="14">TopologicalSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.375" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-BorelSpace" data-verso-hover="15">BorelSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.375" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span></code><p>
+              <code class="hl lean block" data-lean-context="examples"><span class="keyword token" data-binding="kw-occ-Lean.Parser.Command.variable-901" data-verso-hover="0">variable</span><span class="inter-text"> </span><span class="unknown token" data-binding="">{</span><span class="var token" data-binding="var-_uniq.353" data-verso-hover="1">Ω</span><span class="inter-text"> </span><span class="unknown token" data-binding="">:</span><span class="inter-text"> </span><span class="sort token" data-binding="sort-2022587232982003368" data-verso-hover="2">Type*</span><span class="unknown token" data-binding="">}</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-MeasurableSpace" data-verso-hover="3">MeasurableSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.353" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-TopologicalSpace" data-verso-hover="14">TopologicalSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.353" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span><span class="inter-text"> </span><span class="unknown token" data-binding="">[</span><span class="const token" data-binding="const-BorelSpace" data-verso-hover="15">BorelSpace</span><span class="inter-text"> </span><span class="var token" data-binding="var-_uniq.353" data-verso-hover="1">Ω</span><span class="unknown token" data-binding="">]</span></code><p>
                 For properties related to conditional distributions, it is often convenient or necessary to work in a standard Borel space (a measurable space arising as the Borel sets of some Polish topology). See the <code>StandardBorelSpace</code> typeclass.
 Note that a countable discrete measurable space is a standard Borel space, so there is no need to worry about that typeclass when doing discrete probability.
 </p>

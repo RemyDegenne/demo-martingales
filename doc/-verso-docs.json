@@ -1,76 +1,68 @@
 {"99":
- "<code>id.{u} {α : Sort u} (a : α) : α</code><span class=\"sep\"></span><code class=\"docstring\">The identity function. `id` takes an implicit argument `α : Sort u`\n(a type in any universe), and an argument `a : α`, and returns `a`.\n\nAlthough this may look like a useless function, one application of the identity\nfunction is to explicitly put a type on an expression. If `e` has type `T`,\nand `T'` is definitionally equal to `T`, then `@id T' e` typechecks, and Lean\nknows that this expression has type `T'` rather than `T`. This can make a\ndifference for typeclass inference, since `T` and `T'` may have different\ntypeclass instances on them. `show T' from e` is sugar for an `@id T' e`\nexpression.\n</code>",
- "98":
- "<code>Filter.univ_mem'.{u_1} {α : Type u_1} {f : Filter α} {s : Set α} (h : ∀ (a : α), a ∈ s) : s ∈ f</code>",
- "97":
- "<code>Filter.mp_mem.{u_1} {α : Type u_1} {f : Filter α} {s t : Set α} (hs : s ∈ f) (h : {x | x ∈ s → x ∈ t} ∈ f) : t ∈ f</code>",
- "96":
- "<code>AEMeasurable.aestronglyMeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} [TopologicalSpace β] {m₀ : MeasurableSpace α}\n  {μ : Measure α} {f : α → β} [MeasurableSpace β] [TopologicalSpace.PseudoMetrizableSpace β] [OpensMeasurableSpace β]\n  [SecondCountableTopology β] (hf : AEMeasurable f μ) : AEStronglyMeasurable f μ</code><span class=\"sep\"></span><code class=\"docstring\">In a space with second countable topology, measurable implies strongly measurable. </code>",
- "95":
- "<code>Measurable.aemeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} {m : MeasurableSpace α} [MeasurableSpace β] {f : α → β}\n  {μ : Measure α} (h : Measurable f) : AEMeasurable f μ</code>",
- "94":
- "<code>le_rfl.{u_1} {α : Type u_1} [Preorder α] {a : α} : a ≤ a</code><span class=\"sep\"></span><code class=\"docstring\">A version of `le_refl` where the argument is implicit </code>",
- "93":
- "<code>rfl.{u} {α : Sort u} {a : α} : a = a</code><span class=\"sep\"></span><code class=\"docstring\">`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, Lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nLean by `rfl`, because both sides are the same up to definitional equality.\n</code>",
- "92":
- "<code>le_sSup.{u_1} {α : Type u_1} [CompleteSemilatticeSup α] {s : Set α} {a : α} : a ∈ s → a ≤ sSup s</code>",
- "91":
  "<code>Measurable.mono.{u_1, u_2} {α : Type u_1} {β : Type u_2} {ma ma' : MeasurableSpace α} {mb mb' : MeasurableSpace β}\n  {f : α → β} (hf : Measurable f) (ha : ma ≤ ma') (hb : mb' ≤ mb) : Measurable f</code>",
- "90":
+ "98":
  "<code>MeasureTheory.Submartingale.stronglyMeasurable.{u_1, u_2, u_3} {Ω : Type u_1} {E : Type u_2} {ι : Type u_3} [Preorder ι]\n  {m0 : MeasurableSpace Ω} {μ : Measure Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {f : ι → Ω → E}\n  {ℱ : Filtration ι m0} [LE E] (hf : Submartingale f ℱ μ) (i : ι) : StronglyMeasurable (f i)</code>",
+ "97":
+ "<code>aemeasurable_of_tendsto_metrizable_ae'.{u_1, u_2} {α : Type u_1} {β : Type u_2} [MeasurableSpace α] [TopologicalSpace β]\n  [TopologicalSpace.PseudoMetrizableSpace β] [MeasurableSpace β] [BorelSpace β] {μ : Measure α} {f : ℕ → α → β}\n  {g : α → β} (hf : ∀ (n : ℕ), AEMeasurable (f n) μ)\n  (h_ae_tendsto : ∀ᵐ (x : α) ∂μ, Tendsto (fun n =&gt; f n x) atTop (𝓝 (g x))) : AEMeasurable g μ</code>",
+ "96":
+ "<code class=\"docstring\">A function is `m`-`AEStronglyMeasurable` with respect to a measure `μ` if it is almost\neverywhere equal to the limit of a sequence of `m`-simple functions. </code>",
+ "95": "<code>AEStronglyMeasurable g' (P.trim hle)</code>",
+ "94":
+ "<code>Exists.choose_spec.{u_1} {α : Sort u_1} {p : α → Prop} (P : ∃ a, p a) : p P.choose</code><span class=\"sep\"></span><code class=\"docstring\">Show that an element extracted from `P : ∃ a, p a` using `P.choose` satisfies `p`. </code>",
+ "93":
+ "<code class=\"docstring\">`simp_rw` functions as a mix of `simp` and `rw`. Like `rw`, it applies each\nrewrite rule in the given order, but like `simp` it repeatedly applies these\nrules and also under binders like `∀ x, ...`, `∃ x, ...` and `fun x ↦...`.\nUsage:\n\n- `simp_rw [lemma_1, ..., lemma_n]` will rewrite the goal by applying the\n  lemmas in that order. A lemma preceded by `←` is applied in the reverse direction.\n- `simp_rw [lemma_1, ..., lemma_n] at h₁ ... hₙ` will rewrite the given hypotheses.\n- `simp_rw [...] at *` rewrites in the whole context: all hypotheses and the goal.\n\nLemmas passed to `simp_rw` must be expressions that are valid arguments to `simp`.\nFor example, neither `simp` nor `rw` can solve the following, but `simp_rw` can:\n\n```lean\nexample {a : ℕ}\n    (h1 : ∀ a b : ℕ, a - 1 ≤ b ↔ a ≤ b + 1)\n    (h2 : ∀ a b : ℕ, a ≤ b ↔ ∀ c, c &lt; a → c &lt; b) :\n    (∀ b, a - 1 ≤ b) = ∀ b c : ℕ, c &lt; a → c &lt; b + 1 := by\n  simp_rw [h1, h2]\n```\n</code>",
+ "92": "<code>∃ c, Tendsto (fun n =&gt; Y n ω) atTop (𝓝 c)</code>",
+ "91":
+ "<code>MeasureTheory.Submartingale.exists_ae_trim_tendsto_of_bdd.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {ℱ : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {R : ℝ≥0} [IsFiniteMeasure μ] (hf : Submartingale f ℱ μ)\n  (hbdd : ∀ (n : ℕ), eLpNorm (f n) 1 μ ≤ ↑R) : ∀ᵐ (ω : Ω) ∂μ.trim ⋯, ∃ c, Tendsto (fun n =&gt; f n ω) atTop (𝓝 c)</code>",
+ "90":
+ "<code class=\"docstring\">`filter_upwards [h₁, ⋯, hₙ]` replaces a goal of the form `s ∈ f` and terms\n`h₁ : t₁ ∈ f, ⋯, hₙ : tₙ ∈ f` with `∀ x, x ∈ t₁ → ⋯ → x ∈ tₙ → x ∈ s`.\nThe list is an optional parameter, `[]` being its default value.\n\n`filter_upwards [h₁, ⋯, hₙ] with a₁ a₂ ⋯ aₖ` is a short form for\n`{ filter_upwards [h₁, ⋯, hₙ], intro a₁ a₂ ⋯ aₖ }`.\n\n`filter_upwards [h₁, ⋯, hₙ] using e` is a short form for\n`{ filter_upwards [h1, ⋯, hn], exact e }`.\n\nCombining both shortcuts is done by writing `filter_upwards [h₁, ⋯, hₙ] with a₁ a₂ ⋯ aₖ using e`.\nNote that in this case, the `aᵢ` terms can be used in `e`.\n</code>",
  "9": "<code>Set ℝ</code>",
  "89":
- "<code>aemeasurable_of_tendsto_metrizable_ae'.{u_1, u_2} {α : Type u_1} {β : Type u_2} [MeasurableSpace α] [TopologicalSpace β]\n  [TopologicalSpace.PseudoMetrizableSpace β] [MeasurableSpace β] [BorelSpace β] {μ : Measure α} {f : ℕ → α → β}\n  {g : α → β} (hf : ∀ (n : ℕ), AEMeasurable (f n) μ)\n  (h_ae_tendsto : ∀ᵐ (x : α) ∂μ, Tendsto (fun n =&gt; f n x) atTop (𝓝 (g x))) : AEMeasurable g μ</code>",
- "88":
- "<code class=\"docstring\">A function is `m`-`AEStronglyMeasurable` with respect to a measure `μ` if it is almost\neverywhere equal to the limit of a sequence of `m`-simple functions. </code>",
- "87": "<code>AEStronglyMeasurable g' (P.trim hle)</code>",
- "86":
- "<code>Exists.choose_spec.{u_1} {α : Sort u_1} {p : α → Prop} (P : ∃ a, p a) : p P.choose</code><span class=\"sep\"></span><code class=\"docstring\">Show that an element extracted from `P : ∃ a, p a` using `P.choose` satisfies `p`. </code>",
- "85":
- "<code class=\"docstring\">`simp_rw` functions as a mix of `simp` and `rw`. Like `rw`, it applies each\nrewrite rule in the given order, but like `simp` it repeatedly applies these\nrules and also under binders like `∀ x, ...`, `∃ x, ...` and `fun x ↦...`.\nUsage:\n\n- `simp_rw [lemma_1, ..., lemma_n]` will rewrite the goal by applying the\n  lemmas in that order. A lemma preceded by `←` is applied in the reverse direction.\n- `simp_rw [lemma_1, ..., lemma_n] at h₁ ... hₙ` will rewrite the given hypotheses.\n- `simp_rw [...] at *` rewrites in the whole context: all hypotheses and the goal.\n\nLemmas passed to `simp_rw` must be expressions that are valid arguments to `simp`.\nFor example, neither `simp` nor `rw` can solve the following, but `simp_rw` can:\n\n```lean\nexample {a : ℕ}\n    (h1 : ∀ a b : ℕ, a - 1 ≤ b ↔ a ≤ b + 1)\n    (h2 : ∀ a b : ℕ, a ≤ b ↔ ∀ c, c &lt; a → c &lt; b) :\n    (∀ b, a - 1 ≤ b) = ∀ b c : ℕ, c &lt; a → c &lt; b + 1 := by\n  simp_rw [h1, h2]\n```\n</code>",
- "84": "<code>∃ c, Tendsto (fun n =&gt; Y n ω) atTop (𝓝 c)</code>",
- "83":
- "<code>MeasureTheory.Submartingale.exists_ae_trim_tendsto_of_bdd.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {ℱ : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {R : ℝ≥0} [IsFiniteMeasure μ] (hf : Submartingale f ℱ μ)\n  (hbdd : ∀ (n : ℕ), eLpNorm (f n) 1 μ ≤ ↑R) : ∀ᵐ (ω : Ω) ∂μ.trim ⋯, ∃ c, Tendsto (fun n =&gt; f n ω) atTop (𝓝 c)</code>",
- "82":
- "<code class=\"docstring\">`filter_upwards [h₁, ⋯, hₙ]` replaces a goal of the form `s ∈ f` and terms\n`h₁ : t₁ ∈ f, ⋯, hₙ : tₙ ∈ f` with `∀ x, x ∈ t₁ → ⋯ → x ∈ tₙ → x ∈ s`.\nThe list is an optional parameter, `[]` being its default value.\n\n`filter_upwards [h₁, ⋯, hₙ] with a₁ a₂ ⋯ aₖ` is a short form for\n`{ filter_upwards [h₁, ⋯, hₙ], intros a₁ a₂ ⋯ aₖ }`.\n\n`filter_upwards [h₁, ⋯, hₙ] using e` is a short form for\n`{ filter_upwards [h1, ⋯, hn], exact e }`.\n\nCombining both shortcuts is done by writing `filter_upwards [h₁, ⋯, hₙ] with a₁ a₂ ⋯ aₖ using e`.\nNote that in this case, the `aᵢ` terms can be used in `e`.\n</code>",
- "81":
  "<code>MeasureTheory.Measure.trim.{u_1} {α : Type u_1} {m m0 : MeasurableSpace α} (μ : Measure α) (hm : m ≤ m0) : Measure α</code><span class=\"sep\"></span><code class=\"docstring\">Restriction of a measure to a sub-σ-algebra.\nIt is common to see a measure `μ` on a measurable space structure `m0` as being also a measure on\nany `m ≤ m0`. Since measures in mathlib have to be trimmed to the measurable space, `μ` itself\ncannot be a measure on `m`, hence the definition of `μ.trim hm`.\n\nThis notion is related to `OuterMeasure.trim`, see the lemma\n`toOuterMeasure_trim_eq_trim_toOuterMeasure`. </code>",
- "80":
+ "88":
  "<code>∀ᵐ (ω : Ω) ∂P.trim hle, Tendsto (fun x =&gt; Y x ω) atTop (𝓝 (g' ω))</code>",
+ "87": "<code>Nat.instPreorder : Preorder ℕ</code>",
+ "86": "<code>(fun n =&gt; ↑_fvar.8039 n) n = x</code>",
+ "85":
+ "<code>Eq.rec.{u, u_1} {α : Sort u_1} {a✝ : α} {motive : (a : α) → a✝ = a → Sort u} (refl : motive a✝ ⋯) {a✝¹ : α}\n  (t : a✝ = a✝¹) : motive a✝¹ t</code>",
+ "84": "<code>(fun n =&gt; ↑_fvar.8039 n) n = m</code>",
+ "83":
+ "<code>Exists.intro.{u} {α : Sort u} {p : α → Prop} (w : α) (h : p w) : Exists p</code><span class=\"sep\"></span><code class=\"docstring\">Existential introduction. If `a : α` and `h : p a`,\nthen `⟨a, h⟩` is a proof that `∃ x : α, p x`. </code>",
+ "82": "<code>m ∈ range fun n =&gt; ↑_fvar.8039 n</code>",
+ "81": "<code>MeasurableSpace _fvar.7832</code>",
+ "80": "<code>(fun n =&gt; ↑𝓕 n) n = m</code>",
  "8":
  "<code>MeasureTheory.MeasureSpace.{u_6} (α : Type u_6) : Type u_6</code><span class=\"sep\"></span><code class=\"docstring\">A measure space is a measurable space equipped with a\nmeasure, referred to as `volume`. </code>",
  "79":
- "<code>Eq.rec.{u, u_1} {α : Sort u_1} {a✝ : α} {motive : (a : α) → a✝ = a → Sort u} (refl : motive a✝ ⋯) {a✝¹ : α}\n  (t : a✝ = a✝¹) : motive a✝¹ t</code>",
- "78":
- "<code>Exists.intro.{u} {α : Sort u} {p : α → Prop} (w : α) (h : p w) : Exists p</code><span class=\"sep\"></span><code class=\"docstring\">Existential introduction. If `a : α` and `h : p a`,\nthen `⟨a, h⟩` is a proof that `∃ x : α, p x`. </code>",
- "77": "<code>m ∈ range fun n =&gt; ↑𝓕 n</code>",
- "76": "<code>(fun n =&gt; ↑𝓕 n) n = m</code>",
- "75":
  "<code>sSup_le.{u_1} {α : Type u_1} [CompleteSemilatticeSup α] {s : Set α} {a : α} : (∀ b ∈ s, b ≤ a) → sSup s ≤ a</code>",
- "74": "<code>⨆ n, ↑𝓕 n ≤ mΩ</code>",
- "73":
- "<code class=\"docstring\">The `have` tactic is for adding hypotheses to the local context of the main goal.\n* `have h : t := e` adds the hypothesis `h : t` if `e` is a term of type `t`.\n* `have h := e` uses the type of `e` for `t`.\n* `have : t := e` and `have := e` use `this` for the name of the hypothesis.\n* `have pat := e` for a pattern `pat` is equivalent to `match e with | pat =&gt; _`,\n  where `_` stands for the tactics that follow this one.\n  It is convenient for types that have only one applicable constructor.\n  For example, given `h : p ∧ q ∧ r`, `have ⟨h₁, h₂, h₃⟩ := h` produces the\n  hypotheses `h₁ : p`, `h₂ : q`, and `h₃ : r`.\n</code>",
- "72":
+ "78": "<code>⨆ n, ↑𝓕 n ≤ mΩ</code>",
+ "77":
+ "<code class=\"docstring\">The `have` tactic is for adding opaque definitions and hypotheses to the local context of the main goal.\nThe definitions forget their associated value and cannot be unfolded, unlike definitions added by the `let` tactic.\n\n* `have h : t := e` adds the hypothesis `h : t` if `e` is a term of type `t`.\n* `have h := e` uses the type of `e` for `t`.\n* `have : t := e` and `have := e` use `this` for the name of the hypothesis.\n* `have pat := e` for a pattern `pat` is equivalent to `match e with | pat =&gt; _`,\n  where `_` stands for the tactics that follow this one.\n  It is convenient for types that have only one applicable constructor.\n  For example, given `h : p ∧ q ∧ r`, `have ⟨h₁, h₂, h₃⟩ := h` produces the\n  hypotheses `h₁ : p`, `h₂ : q`, and `h₃ : r`.\n* The syntax `have (eq := h) pat := e` is equivalent to `match h : e with | pat =&gt; _`,\n  which adds the equation `h : e = pat` to the local context.\n\nThe tactic supports all the same syntax variants and options as the `have` term.\n\n## Properties and relations\n\n* It is not possible to unfold a variable introduced using `have`, since the definition's value is forgotten.\n  The `let` tactic introduces definitions that can be unfolded.\n* The `have h : t := e` is like doing `let h : t := e; clear_value h`.\n* The `have` tactic is preferred for propositions, and `let` is preferred for non-propositions.\n* Sometimes `have` is used for non-propositions to ensure that the variable is never unfolded,\n  which may be important for performance reasons.\n    Consider using the equivalent `let +nondep` to indicate the intent.\n\n</code>",
+ "76": "<code>∃ c, Tendsto (fun x =&gt; @_fvar.9473 x ω) atTop (𝓝 c)</code>",
+ "75":
  "<code>Exists.choose.{u_1} {α : Sort u_1} {p : α → Prop} (P : ∃ a, p a) : α</code><span class=\"sep\"></span><code class=\"docstring\">Extract an element from an existential statement, using `Classical.choose`. </code>",
- "71": "<code>ℝ</code>",
- "70": "<code>∃ c, Tendsto (fun x =&gt; Y x ω) atTop (𝓝 c)</code>",
+ "74": "<code>ℝ</code>",
+ "73": "<code>∃ c, Tendsto (fun x =&gt; Y x ω) atTop (𝓝 c)</code>",
+ "72":
+ "<code class=\"docstring\">\"Dependent\" if-then-else, normally written via the notation `if h : c then t(h) else e(h)`,\nis sugar for `dite c (fun h =&gt; t(h)) (fun h =&gt; e(h))`, and it is the same as\n`if c then t else e` except that `t` is allowed to depend on a proof `h : c`,\nand `e` can depend on `h : ¬c`. (Both branches use the same name for the hypothesis,\neven though it has different types in the two cases.)\n\nWe use this to be able to communicate the if-then-else condition to the branches.\nFor example, `Array.get arr i h` expects a proof `h : i &lt; arr.size` in order to\navoid a bounds check, so you can write `if h : i &lt; arr.size then arr.get i h else ...`\nto avoid the bounds check inside the if branch. (Of course in this case we have only\nlifted the check into an explicit `if`, but we could also use this proof multiple times\nor derive `i &lt; arr.size` from some other proposition that we are checking in the `if`.)\n</code>",
+ "71":
+ "<code>Classical.choose_spec.{u} {α : Sort u} {p : α → Prop} (h : ∃ x, p x) : p (Classical.choose h)</code>",
+ "70":
+ "<code class=\"docstring\">`exact e` closes the main goal if its target type matches that of `e`.\n</code>",
  "7": "<code>Measure ℝ</code>",
  "69":
- "<code class=\"docstring\">\"Dependent\" if-then-else, normally written via the notation `if h : c then t(h) else e(h)`,\nis sugar for `dite c (fun h =&gt; t(h)) (fun h =&gt; e(h))`, and it is the same as\n`if c then t else e` except that `t` is allowed to depend on a proof `h : c`,\nand `e` can depend on `h : ¬c`. (Both branches use the same name for the hypothesis,\neven though it has different types in the two cases.)\n\nWe use this to be able to communicate the if-then-else condition to the branches.\nFor example, `Array.get arr i h` expects a proof `h : i &lt; arr.size` in order to\navoid a bounds check, so you can write `if h : i &lt; arr.size then arr.get i h else ...`\nto avoid the bounds check inside the if branch. (Of course in this case we have only\nlifted the check into an explicit `if`, but we could also use this proof multiple times\nor derive `i &lt; arr.size` from some other proposition that we are checking in the `if`.)\n</code>",
- "68":
- "<code>Classical.choose_spec.{u} {α : Sort u} {p : α → Prop} (h : ∃ x, p x) : p (Classical.choose h)</code>",
- "67":
- "<code class=\"docstring\">`exact e` closes the main goal if its target type matches that of `e`.\n</code>",
- "66":
  "<code>Classical.choose.{u} {α : Sort u} {p : α → Prop} (h : ∃ x, p x) : α</code><span class=\"sep\"></span><code class=\"docstring\">Given that there exists an element satisfying `p`, returns one such element.\n\nThis is a straightforward consequence of, and equivalent to, `Classical.choice`.\n\nSee also `choose_spec`, which asserts that the returned value has property `p`.\n</code>",
- "65":
+ "68":
  "<code>dif_pos.{u} {c : Prop} {h : Decidable c} (hc : c) {α : Sort u} {t : c → α} {e : ¬c → α} : dite c t e = t hc</code>",
- "64":
+ "67":
  "<code class=\"docstring\">`rw` is like `rewrite`, but also tries to close the goal by \"cheap\" (reducible) `rfl` afterwards.\n</code>",
- "63":
+ "66": "<code></code>",
+ "65": "<code>_fvar.7832</code>",
+ "64":
  "<code>And (a b : Prop) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">`And a b`, or `a ∧ b`, is the conjunction of propositions. It can be\nconstructed and destructed like a pair: if `ha : a` and `hb : b` then\n`⟨ha, hb⟩ : a ∧ b`, and if `h : a ∧ b` then `h.left : a` and `h.right : b`.\n\n\nConventions for notations in identifiers:\n\n * The recommended spelling of `∧` in identifiers is `and`.\n\n * The recommended spelling of `/\\` in identifiers is `and` (prefer `∧` over `/\\`).</code>",
- "62":
+ "63":
  "<code>MeasureTheory.StronglyMeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} [TopologicalSpace β] [MeasurableSpace α]\n  (f : α → β) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A function is `StronglyMeasurable` if it is the limit of simple functions. </code>",
+ "62": "<code>_fvar.7832 → ℝ</code>",
  "61":
  "<code>∃ g, StronglyMeasurable g ∧ ∀ᵐ (ω : Ω) ∂P, Tendsto (fun x =&gt; Y x ω) atTop (𝓝 (g ω))</code>",
  "60":
@@ -95,7 +87,7 @@
  "51":
  "<code class=\"docstring\">`by tac` constructs a term of the expected type by running the tactic(s) `tac`. </code>",
  "50":
- "<code>MeasureTheory.Filtration.limitProcess.{u_1, u_3, u_4} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι]\n  {E : Type u_4} [Zero E] [TopologicalSpace E] (f : ι → Ω → E) (ℱ : Filtration ι m) (μ : Measure Ω) : Ω → E</code><span class=\"sep\"></span><code class=\"docstring\">Given a process `f` and a filtration `ℱ`, if `f` converges to some `g` almost everywhere and\n`g` is `⨆ n, ℱ n`-measurable, then `limitProcess f ℱ μ` chooses said `g`, else it returns 0.\n\nThis definition is used to phrase the a.e. martingale convergence theorem\n`Submartingale.ae_tendsto_limitProcess` where an L¹-bounded submartingale `f` adapted to `ℱ`\nconverges to `limitProcess f ℱ μ` `μ`-almost everywhere. </code>",
+ "<code>MeasureTheory.Filtration.limitProcess.{u_1, u_2, u_4} {Ω : Type u_1} {ι : Type u_2} {m : MeasurableSpace Ω} [Preorder ι]\n  {E : Type u_4} [Zero E] [TopologicalSpace E] (f : ι → Ω → E) (ℱ : Filtration ι m) (μ : Measure Ω) : Ω → E</code><span class=\"sep\"></span><code class=\"docstring\">Given a process `f` and a filtration `ℱ`, if `f` converges to some `g` almost everywhere and\n`g` is `⨆ n, ℱ n`-measurable, then `limitProcess f ℱ μ` chooses said `g`, else it returns 0.\n\nThis definition is used to phrase the a.e. martingale convergence theorem\n`Submartingale.ae_tendsto_limitProcess` where an L¹-bounded submartingale `f` adapted to `ℱ`\nconverges to `limitProcess f ℱ μ` `μ`-almost everywhere. </code>",
  "5":
  "<code>MeasureTheory.Measure.{u_6} (α : Type u_6) [MeasurableSpace α] : Type u_6</code><span class=\"sep\"></span><code class=\"docstring\">A measure is defined to be an outer measure that is countably additive on\nmeasurable sets, with the additional assumption that the outer measure is the canonical\nextension of the restricted measure.\n\nThe measure of a set `s`, denoted `μ s`, is an extended nonnegative real. The real-valued version\nis written `μ.real s`.\n</code>",
  "49":
@@ -128,17 +120,17 @@
  "33":
  "<code>MeasureTheory.Martingale.adapted.{u_1, u_2, u_3} {Ω : Type u_1} {E : Type u_2} {ι : Type u_3} [Preorder ι]\n  {m0 : MeasurableSpace Ω} {μ : Measure Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {f : ι → Ω → E}\n  {ℱ : Filtration ι m0} (hf : Martingale f ℱ μ) : Adapted ℱ f</code>",
  "32":
- "<code>MeasureTheory.Adapted.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} {m : MeasurableSpace Ω}\n  [TopologicalSpace β] [Preorder ι] (f : Filtration ι m) (u : ι → Ω → β) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A sequence of functions `u` is adapted to a filtration `f` if for all `i`,\n`u i` is `f i`-measurable. </code>",
+ "<code>MeasureTheory.Adapted.{u_1, u_2, u_3} {Ω : Type u_1} {ι : Type u_2} {m : MeasurableSpace Ω} [Preorder ι]\n  {β : ι → Type u_3} [(i : ι) → TopologicalSpace (β i)] (f : Filtration ι m) (u : (i : ι) → Ω → β i) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A sequence of functions `u` is adapted to a filtration `f` if for all `i`,\n`u i` is `f i`-measurable. </code>",
  "31":
  "<code>MeasureTheory.Martingale.{u_1, u_2, u_3} {Ω : Type u_1} {E : Type u_2} {ι : Type u_3} [Preorder ι]\n  {m0 : MeasurableSpace Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] (f : ι → Ω → E)\n  (ℱ : Filtration ι m0) (μ : Measure Ω) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A family of functions `f : ι → Ω → E` is a martingale with respect to a filtration `ℱ` if `f`\nis adapted with respect to `ℱ` and for all `i ≤ j`, `μ[f j | ℱ i] =ᵐ[μ] f i`. </code>",
  "30": "<code>Martingale X 𝓕 P</code>",
  "3":
  "<code>MeasurableSpace.{u_7} (α : Type u_7) : Type u_7</code><span class=\"sep\"></span><code class=\"docstring\">A measurable space is a space equipped with a σ-algebra. </code>",
  "29":
- "<code>MeasureTheory.Filtration.mono.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι] {i j : ι}\n  (f : Filtration ι m) (hij : i ≤ j) : ↑f i ≤ ↑f j</code>",
+ "<code>MeasureTheory.Filtration.mono.{u_1, u_2} {Ω : Type u_1} {ι : Type u_2} {m : MeasurableSpace Ω} [Preorder ι] {i j : ι}\n  (f : Filtration ι m) (hij : i ≤ j) : ↑f i ≤ ↑f j</code>",
  "28": "<code>i ≤ j</code>",
  "27":
- "<code>MeasureTheory.Filtration.le.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι]\n  (f : Filtration ι m) (i : ι) : ↑f i ≤ m</code>",
+ "<code>MeasureTheory.Filtration.le.{u_1, u_2} {Ω : Type u_1} {ι : Type u_2} {m : MeasurableSpace Ω} [Preorder ι]\n  (f : Filtration ι m) (i : ι) : ↑f i ≤ m</code>",
  "26": "<code>ℕ</code>",
  "25":
  "<code>MeasureTheory.Filtration.{u_1, u_2} {Ω : Type u_1} (ι : Type u_2) [Preorder ι] (m : MeasurableSpace Ω) :\n  Type (max u_1 u_2)</code><span class=\"sep\"></span><code class=\"docstring\">A `Filtration` on a measurable space `Ω` with σ-algebra `m` is a monotone\nsequence of sub-σ-algebras of `m`. </code>",
@@ -154,112 +146,145 @@
  "19":
  "<code>NormedAddCommGroup.{u_8} (E : Type u_8) : Type u_8</code><span class=\"sep\"></span><code class=\"docstring\">A normed group is an additive group endowed with a norm for which `dist x y = ‖x - y‖` defines a\nmetric space structure. </code>",
  "18": "<code>MeasurableSpace Ω</code>",
+ "178":
+ "<code>ProbabilityTheory.IndepFun.{u_1, u_6, u_7} {Ω : Type u_1} {β : Type u_6} {γ : Type u_7} {_mΩ : MeasurableSpace Ω}\n  [MeasurableSpace β] [MeasurableSpace γ] (f : Ω → β) (g : Ω → γ) (μ : Measure Ω := by volume_tac) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">Two functions are independent if the two measurable space structures they generate are\nindependent. For a function `f` with codomain having measurable space structure `m`, the generated\nmeasurable space structure is `MeasurableSpace.comap f m`.\nWe use the notation `f ⟂ᵢ[μ] g` for `IndepFun f g μ` (scoped in `ProbabilityTheory`). </code>",
+ "177": "<code>X ⟂ᵢ[P] Y</code>",
+ "176": "<code>Measurable Y</code>",
+ "175": "<code>Ω → ℕ</code>",
+ "174":
+ "<code>ProbabilityTheory.gaussianReal (μ : ℝ) (v : ℝ≥0) : Measure ℝ</code><span class=\"sep\"></span><code class=\"docstring\">A Gaussian distribution on `ℝ` with mean `μ` and variance `v`. </code>",
+ "173":
+ "<code>MeasureTheory.isStoppingTime_const.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι]\n  (f : Filtration ι m) (i : ι) : IsStoppingTime f fun x =&gt; ↑i</code>",
+ "172":
+ "<code>MeasureTheory.Submartingale.integrable_stoppedValue.{u_1, u_2} {Ω : Type u_1} {E : Type u_2} {m0 : MeasurableSpace Ω}\n  {μ : Measure Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {𝒢 : Filtration ℕ m0} [LE E]\n  {f : ℕ → Ω → E} (hf : Submartingale f 𝒢 μ) {τ : Ω → ℕ∞} (hτ : IsStoppingTime 𝒢 τ) {N : ℕ}\n  (hbdd : ∀ (ω : Ω), τ ω ≤ ↑N) : Integrable (stoppedValue f τ) μ</code>",
+ "171":
+ "<code>MeasureTheory.Submartingale.adapted.{u_1, u_2, u_3} {Ω : Type u_1} {E : Type u_2} {ι : Type u_3} [Preorder ι]\n  {m0 : MeasurableSpace Ω} {μ : Measure Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {f : ι → Ω → E}\n  {ℱ : Filtration ι m0} [LE E] (hf : Submartingale f ℱ μ) : Adapted ℱ f</code>",
+ "170":
+ "<code>MeasureTheory.Adapted.stoppedProcess_of_discrete.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3}\n  {m : MeasurableSpace Ω} [TopologicalSpace β] [TopologicalSpace.PseudoMetrizableSpace β] [Nonempty ι] [LinearOrder ι]\n  [TopologicalSpace ι] [SecondCountableTopology ι] [OrderTopology ι] [MeasurableSpace ι] [BorelSpace ι]\n  {f : Filtration ι m} {u : ι → Ω → β} {τ : Ω → WithTop ι} [DiscreteTopology ι] (hu : Adapted f u)\n  (hτ : IsStoppingTime f τ) : Adapted f (stoppedProcess u τ)</code><span class=\"sep\"></span><code class=\"docstring\">If the indexing order has the discrete topology, then the stopped process of an adapted process\nis adapted. </code>",
  "17":
  "<code class=\"docstring\">A type universe. `Type ≡ Type 0`, `Type u ≡ Sort (u + 1)`. </code>",
+ "169":
+ "<code>LE.le.trans.{u_1} {α : Type u_1} [Preorder α] {a b c : α} : a ≤ b → b ≤ c → a ≤ c</code><span class=\"sep\"></span><code class=\"docstring\">**Alias** of `le_trans`.\n\n---\n\nThe relation `≤` on a preorder is transitive. </code>",
+ "168":
+ "<code>min_le_left.{u_1} {α : Type u_1} [LinearOrder α] (a b : α) : min a b ≤ a</code>",
+ "167":
+ "<code>min_le_min.{u} {α : Type u} [LinearOrder α] {a b c d : α} : a ≤ c → b ≤ d → min a b ≤ min c d</code>",
+ "166":
+ "<code>MeasureTheory.IsStoppingTime.min.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [LinearOrder ι]\n  {f : Filtration ι m} {τ π : Ω → WithTop ι} (hτ : IsStoppingTime f τ) (hπ : IsStoppingTime f π) :\n  IsStoppingTime f fun ω =&gt; min (τ ω) (π ω)</code>",
+ "165":
+ "<code>ge_iff_le.{u_1} {α : Type u_1} [LE α] {x y : α} : x ≥ y ↔ y ≤ x</code>",
+ "164": "<code>reduceIte : Lean.Meta.Simp.Simproc</code>",
+ "163": "<code>not_false_eq_true : (¬False) = True</code>",
+ "162": "<code>ne_eq.{u_1} {α : Sort u_1} (a b : α) : (a ≠ b) = ¬a = b</code>",
+ "161": "<code>_fvar.18572</code>",
+ "160": "<code>∀ (ω : Ω), σ ω ≠ ⊤</code>",
  "16": "<code>Type</code>",
  "159":
- "<code>ProbabilityTheory.IndepFun.{u_1, u_6, u_7} {Ω : Type u_1} {β : Type u_6} {γ : Type u_7} {_mΩ : MeasurableSpace Ω}\n  [MeasurableSpace β] [MeasurableSpace γ] (f : Ω → β) (g : Ω → γ) (μ : Measure Ω := by volume_tac) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">Two functions are independent if the two measurable space structures they generate are\nindependent. For a function `f` with codomain having measurable space structure `m`, the generated\nmeasurable space structure is `MeasurableSpace.comap f m`. </code>",
- "158": "<code>IndepFun X Y P</code>",
- "157": "<code>Measurable Y</code>",
- "156":
- "<code>ProbabilityTheory.gaussianReal (μ : ℝ) (v : ℝ≥0) : Measure ℝ</code><span class=\"sep\"></span><code class=\"docstring\">A Gaussian distribution on `ℝ` with mean `μ` and variance `v`. </code>",
+ "<code class=\"docstring\">The `simp` tactic uses lemmas and hypotheses to simplify the main goal target or\nnon-dependent hypotheses. It has many variants:\n- `simp` simplifies the main goal target using lemmas tagged with the attribute `[simp]`.\n- `simp [h₁, h₂, ..., hₙ]` simplifies the main goal target using the lemmas tagged\n  with the attribute `[simp]` and the given `hᵢ`'s, where the `hᵢ`'s are expressions.-\n- If an `hᵢ` is a defined constant `f`, then `f` is unfolded. If `f` has equational lemmas associated\n  with it (and is not a projection or a `reducible` definition), these are used to rewrite with `f`.\n- `simp [*]` simplifies the main goal target using the lemmas tagged with the\n  attribute `[simp]` and all hypotheses.\n- `simp only [h₁, h₂, ..., hₙ]` is like `simp [h₁, h₂, ..., hₙ]` but does not use `[simp]` lemmas.\n- `simp [-id₁, ..., -idₙ]` simplifies the main goal target using the lemmas tagged\n  with the attribute `[simp]`, but removes the ones named `idᵢ`.\n- `simp at h₁ h₂ ... hₙ` simplifies the hypotheses `h₁ : T₁` ... `hₙ : Tₙ`. If\n  the target or another hypothesis depends on `hᵢ`, a new simplified hypothesis\n  `hᵢ` is introduced, but the old one remains in the local context.\n- `simp at *` simplifies all the hypotheses and the target.\n- `simp [*] at *` simplifies target and all (propositional) hypotheses using the\n  other hypotheses.\n</code>",
+ "158":
+ "<code>ne_top_of_le_ne_top.{u} {α : Type u} [PartialOrder α] [OrderTop α] {a b : α} (hb : b ≠ ⊤) (hab : a ≤ b) : a ≠ ⊤</code>",
+ "157": "<code>∀ (ω : Ω), π ω ≠ ⊤</code>",
+ "156": "<code>∀ (x : Ω), π x ≤ ↑n</code>",
  "155":
- "<code>MeasureTheory.isStoppingTime_const.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι]\n  (f : Filtration ι m) (i : ι) : IsStoppingTime f fun x =&gt; i</code>",
+ "<code>Classical.arbitrary.{u_3} (α : Sort u_3) [h : Nonempty α] : α</code><span class=\"sep\"></span><code class=\"docstring\">Using `Classical.choice`, extracts a term from a `Nonempty` type. </code>",
  "154":
- "<code>MeasureTheory.Submartingale.integrable_stoppedValue.{u_1, u_2} {Ω : Type u_1} {E : Type u_2} {m0 : MeasurableSpace Ω}\n  {μ : Measure Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {𝒢 : Filtration ℕ m0} [LE E]\n  {f : ℕ → Ω → E} (hf : Submartingale f 𝒢 μ) {τ : Ω → ℕ} (hτ : IsStoppingTime 𝒢 τ) {N : ℕ} (hbdd : ∀ (ω : Ω), τ ω ≤ N) :\n  Integrable (stoppedValue f τ) μ</code>",
+ "<code>Min.min.{u} {α : Type u} [self : Min α] : α → α → α</code><span class=\"sep\"></span><code class=\"docstring\">Returns the lesser of its two arguments. </code>",
  "153":
- "<code>MeasureTheory.Submartingale.adapted.{u_1, u_2, u_3} {Ω : Type u_1} {E : Type u_2} {ι : Type u_3} [Preorder ι]\n  {m0 : MeasurableSpace Ω} {μ : Measure Ω} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] {f : ι → Ω → E}\n  {ℱ : Filtration ι m0} [LE E] (hf : Submartingale f ℱ μ) : Adapted ℱ f</code>",
+ "<code>Top.top.{u_1} {α : Type u_1} [self : Top α] : α</code><span class=\"sep\"></span><code class=\"docstring\">The top (`⊤`, `\\top`) element </code>",
  "152":
- "<code>MeasureTheory.Adapted.stoppedProcess_of_discrete.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3}\n  {m : MeasurableSpace Ω} [TopologicalSpace β] [TopologicalSpace.PseudoMetrizableSpace β] [LinearOrder ι]\n  [TopologicalSpace ι] [SecondCountableTopology ι] [OrderTopology ι] [MeasurableSpace ι] [BorelSpace ι]\n  {f : Filtration ι m} {u : ι → Ω → β} {τ : Ω → ι} [DiscreteTopology ι] (hu : Adapted f u) (hτ : IsStoppingTime f τ) :\n  Adapted f (stoppedProcess u τ)</code><span class=\"sep\"></span><code class=\"docstring\">If the indexing order has the discrete topology, then the stopped process of an adapted process\nis adapted. </code>",
+ "<code>Ne.{u} {α : Sort u} (a b : α) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">`a ≠ b`, or `Ne a b` is defined as `¬ (a = b)` or `a = b → False`,\nand asserts that `a` and `b` are not equal.\n\n\nConventions for notations in identifiers:\n\n * The recommended spelling of `≠` in identifiers is `ne`.</code>",
  "151":
- "<code>LE.le.trans.{u_1} {α : Type u_1} [Preorder α] {a b c : α} : a ≤ b → b ≤ c → a ≤ c</code><span class=\"sep\"></span><code class=\"docstring\">**Alias** of `le_trans`.\n\n---\n\nThe relation `≤` on a preorder is transitive. </code>",
+ "<code>ite.{u} {α : Sort u} (c : Prop) [h : Decidable c] (t e : α) : α</code><span class=\"sep\"></span><code class=\"docstring\">`if c then t else e` is notation for `ite c t e`, \"if-then-else\", which decides to\nreturn `t` or `e` depending on whether `c` is true or false. The explicit argument\n`c : Prop` does not have any actual computational content, but there is an additional\n`[Decidable c]` argument synthesized by typeclass inference which actually\ndetermines how to evaluate `c` to true or false. Write `if h : c then t else e`\ninstead for a \"dependent if-then-else\" `dite`, which allows `t`/`e` to use the fact\nthat `c` is true/false.\n</code>",
  "150":
- "<code>min_le_left.{u_1} {α : Type u_1} [LinearOrder α] (a b : α) : min a b ≤ a</code>",
+ "<code>MeasureTheory.stoppedValue_stoppedProcess.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} [Nonempty ι]\n  [LinearOrder ι] {u : ι → Ω → β} {τ σ : Ω → WithTop ι} :\n  stoppedValue (stoppedProcess u τ) σ = fun ω =&gt;\n    if σ ω ≠ ⊤ then stoppedValue u (fun ω =&gt; min (σ ω) (τ ω)) ω\n    else stoppedValue u (fun ω =&gt; min (↑(Classical.arbitrary ι)) (τ ω)) ω</code>",
  "15":
  "<code>BorelSpace.{u_6} (α : Type u_6) [TopologicalSpace α] [MeasurableSpace α] : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A space with `MeasurableSpace` and `TopologicalSpace` structures such that\nthe `σ`-algebra of measurable sets is exactly the `σ`-algebra generated by open sets. </code>",
- "149":
- "<code>min_le_min.{u} {α : Type u} [LinearOrder α] {a b c d : α} : a ≤ c → b ≤ d → min a b ≤ min c d</code>",
- "148":
- "<code>MeasureTheory.IsStoppingTime.min.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [LinearOrder ι]\n  {f : Filtration ι m} {τ π : Ω → ι} (hτ : IsStoppingTime f τ) (hπ : IsStoppingTime f π) :\n  IsStoppingTime f fun ω =&gt; min (τ ω) (π ω)</code>",
- "147": "<code>∀ (x : Ω), π x ≤ n</code>",
- "146":
- "<code>Min.min.{u} {α : Type u} [self : Min α] : α → α → α</code><span class=\"sep\"></span><code class=\"docstring\">Returns the lesser of its two arguments. </code>",
+ "149": "<code>∃ N, ∀ (x : Ω), π x ≤ ↑N</code>",
+ "148": "<code>σ ≤ π</code>",
+ "147": "<code>IsStoppingTime 𝓕 π</code>",
+ "146": "<code>IsStoppingTime 𝓕 σ</code>",
  "145":
- "<code>MeasureTheory.stoppedValue_stoppedProcess.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} [LinearOrder ι]\n  {u : ι → Ω → β} {τ σ : Ω → ι} : stoppedValue (stoppedProcess u τ) σ = stoppedValue u fun ω =&gt; min (σ ω) (τ ω)</code>",
- "144": "<code>∃ N, ∀ (x : Ω), π x ≤ N</code>",
- "143": "<code>σ ≤ π</code>",
- "142": "<code>IsStoppingTime 𝓕 π</code>",
- "141": "<code>IsStoppingTime 𝓕 σ</code>",
+ "<code class=\"docstring\">Introduces one or more hypotheses, optionally naming and/or pattern-matching them.\nFor each hypothesis to be introduced, the remaining main goal's target type must\nbe a `let` or function type.\n\n* `intro` by itself introduces one anonymous hypothesis, which can be accessed\n  by e.g. `assumption`. It is equivalent to `intro _`.\n* `intro x y` introduces two hypotheses and names them. Individual hypotheses\n  can be anonymized via `_`, given a type ascription, or matched against a pattern:\n  ```lean\n  -- ... ⊢ α × β → ...\n  intro (a, b)\n  -- ..., a : α, b : β ⊢ ...\n  ```\n* `intro rfl` is short for `intro h; subst h`, if `h` is an equality where the left-hand or right-hand side\n  is a variable.\n* Alternatively, `intro` can be combined with pattern matching much like `fun`:\n  ```lean\n  intro\n  | n + 1, 0 =&gt; tac\n  | ...\n  ```\n</code>",
+ "144":
+ "<code>MeasureTheory.integral.{u_6, u_7} {α : Type u_6} {G : Type u_7} [NormedAddCommGroup G] [NormedSpace ℝ G]\n  {x✝ : MeasurableSpace α} (μ : Measure α) (f : α → G) : G</code><span class=\"sep\"></span><code class=\"docstring\">The Bochner integral </code>",
+ "143":
+ "<code>MeasureTheory.submartingale_iff_expected_stoppedValue_mono.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} [IsFiniteMeasure μ] (hadp : Adapted 𝒢 f)\n  (hint : ∀ (i : ℕ), Integrable (f i) μ) :\n  Submartingale f 𝒢 μ ↔\n    ∀ (τ π : Ω → ℕ∞),\n      IsStoppingTime 𝒢 τ →\n        IsStoppingTime 𝒢 π →\n          τ ≤ π → (∃ N, ∀ (x : Ω), π x ≤ ↑N) → ∫ (x : Ω), stoppedValue f τ x ∂μ ≤ ∫ (x : Ω), stoppedValue f π x ∂μ</code><span class=\"sep\"></span><code class=\"docstring\">**The optional stopping theorem** (fair game theorem): an adapted integrable process `f`\nis a submartingale if and only if for all bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nstopped value of `f` at `τ` has expectation smaller than its stopped value at `π`. </code>",
+ "142":
+ "<code>ENat : Type</code><span class=\"sep\"></span><code class=\"docstring\">Extended natural numbers `ℕ∞ = WithTop ℕ`. </code>",
+ "141":
+ "<code>MeasureTheory.stoppedProcess.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} [Nonempty ι] [LinearOrder ι]\n  (u : ι → Ω → β) (τ : Ω → WithTop ι) : ι → Ω → β</code><span class=\"sep\"></span><code class=\"docstring\">Given a map `u : ι → Ω → E`, the stopped process with respect to `τ` is `u i ω` if\n`i ≤ τ ω`, and `u (τ ω) ω` otherwise.\n\nIntuitively, the stopped process stops evolving once the stopping time has occurred. </code>",
  "140":
- "<code class=\"docstring\">Introduces one or more hypotheses, optionally naming and/or pattern-matching them.\nFor each hypothesis to be introduced, the remaining main goal's target type must\nbe a `let` or function type.\n\n* `intro` by itself introduces one anonymous hypothesis, which can be accessed\n  by e.g. `assumption`.\n* `intro x y` introduces two hypotheses and names them. Individual hypotheses\n  can be anonymized via `_`, or matched against a pattern:\n  ```lean\n  -- ... ⊢ α × β → ...\n  intro (a, b)\n  -- ..., a : α, b : β ⊢ ...\n  ```\n* Alternatively, `intro` can be combined with pattern matching much like `fun`:\n  ```lean\n  intro\n  | n + 1, 0 =&gt; tac\n  | ...\n  ```\n</code>",
+ "<code>Submartingale.stoppedProcess {Ω : Type} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]\n  {𝓕 : Filtration ℕ mΩ} {τ : Ω → ℕ∞} {Y : ℕ → Ω → ℝ} (h : Submartingale Y 𝓕 P) (hτ : IsStoppingTime 𝓕 τ) :\n  Submartingale (stoppedProcess Y τ) 𝓕 P</code><span class=\"sep\"></span><code class=\"docstring\">The stopped process of a submartingale with respect to a stopping time is a submartingale. </code>",
  "14":
  "<code>TopologicalSpace.{u} (X : Type u) : Type u</code><span class=\"sep\"></span><code class=\"docstring\">A topology on `X`. </code>",
  "139":
- "<code>MeasureTheory.integral.{u_6, u_7} {α : Type u_6} {G : Type u_7} [NormedAddCommGroup G] [NormedSpace ℝ G]\n  {x✝ : MeasurableSpace α} (μ : Measure α) (f : α → G) : G</code><span class=\"sep\"></span><code class=\"docstring\">The Bochner integral </code>",
- "138":
- "<code>MeasureTheory.submartingale_iff_expected_stoppedValue_mono.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} [IsFiniteMeasure μ] (hadp : Adapted 𝒢 f)\n  (hint : ∀ (i : ℕ), Integrable (f i) μ) :\n  Submartingale f 𝒢 μ ↔\n    ∀ (τ π : Ω → ℕ),\n      IsStoppingTime 𝒢 τ →\n        IsStoppingTime 𝒢 π →\n          τ ≤ π → (∃ N, ∀ (x : Ω), π x ≤ N) → ∫ (x : Ω), stoppedValue f τ x ∂μ ≤ ∫ (x : Ω), stoppedValue f π x ∂μ</code><span class=\"sep\"></span><code class=\"docstring\">**The optional stopping theorem** (fair game theorem): an adapted integrable process `f`\nis a submartingale if and only if for all bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nstopped value of `f` at `τ` has expectation smaller than its stopped value at `π`. </code>",
- "137":
- "<code>MeasureTheory.stoppedProcess.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} [LinearOrder ι]\n  (u : ι → Ω → β) (τ : Ω → ι) : ι → Ω → β</code><span class=\"sep\"></span><code class=\"docstring\">Given a map `u : ι → Ω → E`, the stopped process with respect to `τ` is `u i ω` if\n`i ≤ τ ω`, and `u (τ ω) ω` otherwise.\n\nIntuitively, the stopped process stops evolving once the stopping time has occurred. </code>",
+ "<code>MeasureTheory.submartingale_of_expected_stoppedValue_mono.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} [IsFiniteMeasure μ] (hadp : Adapted 𝒢 f) (hint : ∀ (i : ℕ), Integrable (f i) μ)\n  (hf :\n    ∀ (τ π : Ω → ℕ∞),\n      IsStoppingTime 𝒢 τ →\n        IsStoppingTime 𝒢 π →\n          τ ≤ π → (∃ N, ∀ (ω : Ω), π ω ≤ ↑N) → ∫ (x : Ω), stoppedValue f τ x ∂μ ≤ ∫ (x : Ω), stoppedValue f π x ∂μ) :\n  Submartingale f 𝒢 μ</code><span class=\"sep\"></span><code class=\"docstring\">The converse direction of the optional stopping theorem, i.e. an adapted integrable process `f`\nis a submartingale if for all bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nstopped value of `f` at `τ` has expectation smaller than its stopped value at `π`. </code>",
+ "138": "<code>x✝² ≤ x✝¹</code>",
+ "137": "<code>IsStoppingTime 𝓕 x✝²</code>",
  "136":
- "<code>Submartingale.stoppedProcess {Ω : Type} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]\n  {𝓕 : Filtration ℕ mΩ} {τ : Ω → ℕ} {Y : ℕ → Ω → ℝ} (h : Submartingale Y 𝓕 P) (hτ : IsStoppingTime 𝓕 τ) :\n  Submartingale (stoppedProcess Y τ) 𝓕 P</code><span class=\"sep\"></span><code class=\"docstring\">The stopped process of a submartingale with respect to a stopping time is a submartingale. </code>",
- "135":
- "<code>MeasureTheory.submartingale_of_expected_stoppedValue_mono.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} [IsFiniteMeasure μ] (hadp : Adapted 𝒢 f) (hint : ∀ (i : ℕ), Integrable (f i) μ)\n  (hf :\n    ∀ (τ π : Ω → ℕ),\n      IsStoppingTime 𝒢 τ →\n        IsStoppingTime 𝒢 π →\n          τ ≤ π → (∃ N, ∀ (ω : Ω), π ω ≤ N) → ∫ (x : Ω), stoppedValue f τ x ∂μ ≤ ∫ (x : Ω), stoppedValue f π x ∂μ) :\n  Submartingale f 𝒢 μ</code><span class=\"sep\"></span><code class=\"docstring\">The converse direction of the optional stopping theorem, i.e. an adapted integrable process `f`\nis a submartingale if for all bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nstopped value of `f` at `τ` has expectation smaller than its stopped value at `π`. </code>",
- "134": "<code>x✝² ≤ x✝¹</code>",
- "133": "<code>IsStoppingTime 𝓕 x✝²</code>",
- "132":
- "<code>MeasureTheory.Submartingale.expected_stoppedValue_mono.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {τ π : Ω → ℕ} [SigmaFiniteFiltration μ 𝒢] (hf : Submartingale f 𝒢 μ)\n  (hτ : IsStoppingTime 𝒢 τ) (hπ : IsStoppingTime 𝒢 π) (hle : τ ≤ π) {N : ℕ} (hbdd : ∀ (ω : Ω), π ω ≤ N) :\n  ∫ (x : Ω), stoppedValue f τ x ∂μ ≤ ∫ (x : Ω), stoppedValue f π x ∂μ</code><span class=\"sep\"></span><code class=\"docstring\">Given a submartingale `f` and bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nexpectation of `stoppedValue f τ` is less than or equal to the expectation of `stoppedValue f π`.\nThis is the forward direction of the optional stopping theorem. </code>",
- "131": "<code>∀ (x : Ω), x✝¹ x ≤ w✝</code>",
- "130": "<code>x✝¹ ≤ x✝</code>",
+ "<code>MeasureTheory.Submartingale.expected_stoppedValue_mono.{u_1} {Ω : Type u_1} {m0 : MeasurableSpace Ω} {μ : Measure Ω}\n  {𝒢 : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {τ π : Ω → ℕ∞} [SigmaFiniteFiltration μ 𝒢] (hf : Submartingale f 𝒢 μ)\n  (hτ : IsStoppingTime 𝒢 τ) (hπ : IsStoppingTime 𝒢 π) (hle : τ ≤ π) {N : ℕ} (hbdd : ∀ (ω : Ω), π ω ≤ ↑N) :\n  ∫ (x : Ω), stoppedValue f τ x ∂μ ≤ ∫ (x : Ω), stoppedValue f π x ∂μ</code><span class=\"sep\"></span><code class=\"docstring\">Given a submartingale `f` and bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nexpectation of `stoppedValue f τ` is less than or equal to the expectation of `stoppedValue f π`.\nThis is the forward direction of the optional stopping theorem. </code>",
+ "135": "<code>∀ (x : Ω), x✝¹ x ≤ ↑w✝</code>",
+ "134": "<code>x✝¹ ≤ x✝</code>",
+ "133": "<code>IsStoppingTime 𝓕 x✝</code>",
+ "132": "<code>IsStoppingTime 𝓕 x✝¹</code>",
+ "131":
+ "<code>Iff.intro {a b : Prop} (mp : a → b) (mpr : b → a) : a ↔ b</code><span class=\"sep\"></span><code class=\"docstring\">If `a → b` and `b → a` then `a` and `b` are equivalent. </code>",
+ "130":
+ "<code>MeasureTheory.stoppedValue.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} [Nonempty ι] (u : ι → Ω → β)\n  (τ : Ω → WithTop ι) : Ω → β</code><span class=\"sep\"></span><code class=\"docstring\">Given a map `u : ι → Ω → E`, its stopped value with respect to the stopping\ntime `τ` is the map `x ↦ u (τ ω) ω`. </code>",
  "13":
  "<code>Measurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} [MeasurableSpace α] [MeasurableSpace β] (f : α → β) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A function `f` between measurable spaces is measurable if the preimage of every\nmeasurable set is measurable. </code>",
- "129": "<code>IsStoppingTime 𝓕 x✝</code>",
- "128": "<code>IsStoppingTime 𝓕 x✝¹</code>",
- "127":
- "<code>Iff.intro {a b : Prop} (mp : a → b) (mpr : b → a) : a ↔ b</code><span class=\"sep\"></span><code class=\"docstring\">If `a → b` and `b → a` then `a` and `b` are equivalent. </code>",
- "126":
- "<code>MeasureTheory.stoppedValue.{u_1, u_2, u_3} {Ω : Type u_1} {β : Type u_2} {ι : Type u_3} (u : ι → Ω → β) (τ : Ω → ι) :\n  Ω → β</code><span class=\"sep\"></span><code class=\"docstring\">Given a map `u : ι → Ω → E`, its stopped value with respect to the stopping\ntime `τ` is the map `x ↦ u (τ ω) ω`. </code>",
- "125":
+ "129":
  "<code>MeasureTheory.Integrable.{u_5, u_8} {ε : Type u_5} [TopologicalSpace ε] [ContinuousENorm ε] {α : Type u_8}\n  {x✝ : MeasurableSpace α} (f : α → ε) (μ : Measure α := by volume_tac) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">`Integrable f μ` means that `f` is measurable and that the integral `∫⁻ a, ‖f a‖ ∂μ` is finite.\n`Integrable f` means `Integrable f volume`. </code>",
- "124": "<code>∀ (i : ℕ), Integrable (Y i) P</code>",
- "123": "<code>Adapted 𝓕 Y</code>",
- "122":
- "<code>submartingale_iff_expected_stoppedValue_mono' {Ω : Type} {mΩ : MeasurableSpace Ω} {P : Measure Ω}\n  [IsProbabilityMeasure P] {𝓕 : Filtration ℕ mΩ} {Y : ℕ → Ω → ℝ} (hadp : Adapted 𝓕 Y)\n  (hint : ∀ (i : ℕ), Integrable (Y i) P) :\n  Submartingale Y 𝓕 P ↔\n    ∀ (τ π : Ω → ℕ),\n      IsStoppingTime 𝓕 τ →\n        IsStoppingTime 𝓕 π →\n          τ ≤ π → (∃ N, ∀ (x : Ω), π x ≤ N) → ∫ (x : Ω), stoppedValue Y τ x ∂P ≤ ∫ (x : Ω), stoppedValue Y π x ∂P</code><span class=\"sep\"></span><code class=\"docstring\">**The optional stopping theorem** (fair game theorem): an adapted integrable process `Y`\nis a submartingale if and only if for all bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nstopped value of `Y` at `τ` has expectation smaller than its stopped value at `π`. </code>",
- "121":
- "<code>MeasureTheory.IsStoppingTime.measurableSet_le.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω}\n  [Preorder ι] {f : Filtration ι m} {τ : Ω → ι} (hτ : IsStoppingTime f τ) (i : ι) : MeasurableSet {ω | τ ω ≤ i}</code>",
- "120":
+ "128": "<code>∀ (i : ℕ), Integrable (Y i) P</code>",
+ "127": "<code>Adapted 𝓕 Y</code>",
+ "126":
+ "<code>submartingale_iff_expected_stoppedValue_mono' {Ω : Type} {mΩ : MeasurableSpace Ω} {P : Measure Ω}\n  [IsProbabilityMeasure P] {𝓕 : Filtration ℕ mΩ} {Y : ℕ → Ω → ℝ} (hadp : Adapted 𝓕 Y)\n  (hint : ∀ (i : ℕ), Integrable (Y i) P) :\n  Submartingale Y 𝓕 P ↔\n    ∀ (τ π : Ω → ℕ∞),\n      IsStoppingTime 𝓕 τ →\n        IsStoppingTime 𝓕 π →\n          τ ≤ π → (∃ N, ∀ (x : Ω), π x ≤ ↑N) → ∫ (x : Ω), stoppedValue Y τ x ∂P ≤ ∫ (x : Ω), stoppedValue Y π x ∂P</code><span class=\"sep\"></span><code class=\"docstring\">**The optional stopping theorem** (fair game theorem): an adapted integrable process `Y`\nis a submartingale if and only if for all bounded stopping times `τ` and `π` such that `τ ≤ π`, the\nstopped value of `Y` at `τ` has expectation smaller than its stopped value at `π`. </code>",
+ "125":
+ "<code>MeasureTheory.IsStoppingTime.measurableSet_le.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω}\n  [Preorder ι] {f : Filtration ι m} {τ : Ω → WithTop ι} (hτ : IsStoppingTime f τ) (i : ι) : MeasurableSet {ω | τ ω ≤ ↑i}</code>",
+ "124":
  "<code class=\"docstring\">Notation for `MeasurableSet` with respect to a non-standard σ-algebra. </code>",
- "12": "<code>Measurable X</code>",
- "119":
- "<code>MeasureTheory.IsStoppingTime.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι]\n  (f : Filtration ι m) (τ : Ω → ι) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A stopping time with respect to some filtration `f` is a function\n`τ` such that for all `i`, the preimage of `{j | j ≤ i}` along `τ` is measurable\nwith respect to `f i`.\n\nIntuitively, the stopping time `τ` describes some stopping rule such that at time\n`i`, we may determine it with the information we have at time `i`. </code>",
- "118": "<code>IsStoppingTime 𝓕 τ</code>",
- "117": "<code>Ω → ℕ</code>",
- "116":
+ "123":
+ "<code>MeasureTheory.IsStoppingTime.{u_1, u_3} {Ω : Type u_1} {ι : Type u_3} {m : MeasurableSpace Ω} [Preorder ι]\n  (f : Filtration ι m) (τ : Ω → WithTop ι) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A stopping time with respect to some filtration `f` is a function\n`τ` such that for all `i`, the preimage of `{j | j ≤ i}` along `τ` is measurable\nwith respect to `f i`.\n\nIntuitively, the stopping time `τ` describes some stopping rule such that at time\n`i`, we may determine it with the information we have at time `i`. </code>",
+ "122": "<code>IsStoppingTime 𝓕 τ</code>",
+ "121": "<code>Ω → ℕ∞</code>",
+ "120":
  "<code>MeasureTheory.measure_eq_zero_of_trim_eq_zero.{u_1} {α : Type u_1} {m m0 : MeasurableSpace α} {μ : Measure α}\n  {s : Set α} (hm : m ≤ m0) (h : (μ.trim hm) s = 0) : μ s = 0</code>",
- "115": "<code>Tendsto (fun x =&gt; Y x ω) atTop (𝓝 (g' ω))</code>",
- "114": "<code>g' ω = g ω</code>",
- "113":
+ "12": "<code>Measurable X</code>",
+ "119": "<code>Tendsto (fun x =&gt; Y x ω) atTop (𝓝 (g' ω))</code>",
+ "118":
+ "<code>Eq.{u_1} {α : Sort u_1} : α → α → Prop</code><span class=\"sep\"></span><code class=\"docstring\">The equality relation. It has one introduction rule, `Eq.refl`.\nWe use `a = b` as notation for `Eq a b`.\nA fundamental property of equality is that it is an equivalence relation.\n```\nvariable (α : Type) (a b c d : α)\nvariable (hab : a = b) (hcb : c = b) (hcd : c = d)\n\nexample : a = d :=\n  Eq.trans (Eq.trans hab (Eq.symm hcb)) hcd\n```\nEquality is much more than an equivalence relation, however. It has the important property that every assertion\nrespects the equivalence, in the sense that we can substitute equal expressions without changing the truth value.\nThat is, given `h1 : a = b` and `h2 : p a`, we can construct a proof for `p b` using substitution: `Eq.subst h1 h2`.\nExample:\n```\nexample (α : Type) (a b : α) (p : α → Prop)\n        (h1 : a = b) (h2 : p a) : p b :=\n  Eq.subst h1 h2\n\nexample (α : Type) (a b : α) (p : α → Prop)\n    (h1 : a = b) (h2 : p a) : p b :=\n  h1 ▸ h2\n```\nThe triangle in the second presentation is a macro built on top of `Eq.subst` and `Eq.symm`, and you can enter it by typing `\\t`.\nFor more information: [Equality](https://lean-lang.org/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n\n\nConventions for notations in identifiers:\n\n * The recommended spelling of `=` in identifiers is `eq`.</code>",
+ "117": "<code>g' ω = g ω</code>",
+ "116":
  "<code>∀ᵐ (ω : Ω) ∂P.trim hle, Tendsto (fun x =&gt; Y x ω) atTop (𝓝 (g ω))</code>",
- "112":
+ "115":
  "<code>MeasureTheory.ae.{u_1, u_3} {α : Type u_1} {F : Type u_3} [FunLike F (Set α) ℝ≥0∞] [OuterMeasureClass F α] (μ : F) :\n  Filter α</code><span class=\"sep\"></span><code class=\"docstring\">The “almost everywhere” filter of co-null sets. </code>",
- "111":
+ "114":
  "<code>Filter.EventuallyEq.{u_1, u_2} {α : Type u_1} {β : Type u_2} (l : Filter α) (f g : α → β) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">Two functions `f` and `g` are *eventually equal* along a filter `l` if the set of `x` such that\n`f x = g x` belongs to `l`. </code>",
- "110": "<code>g' =ᶠ[ae (P.trim hle)] g</code>",
- "11": "<code>Ω → ℝ</code>",
- "109": "<code>StronglyMeasurable g</code>",
- "108":
+ "113": "<code>g' =ᶠ[ae (P.trim hle)] g</code>",
+ "112": "<code>StronglyMeasurable g</code>",
+ "111":
  "<code class=\"docstring\">The `obtain` tactic is a combination of `have` and `rcases`. See `rcases` for\na description of supported patterns.\n\n```lean\nobtain ⟨patt⟩ : type := proof\n```\nis equivalent to\n```lean\nhave h : type := proof\nrcases h with ⟨patt⟩\n```\n\nIf `⟨patt⟩` is omitted, `rcases` will try to infer the pattern.\n\nIf `type` is omitted, `:= proof` is required.\n</code>",
+ "110": "<code>Real.borelSpace : BorelSpace ℝ</code>",
+ "11": "<code>Ω → ℝ</code>",
+ "109": "<code>Real.measurableSpace : MeasurableSpace ℝ</code>",
+ "108":
+ "<code>PseudoEMetricSpace.pseudoMetrizableSpace.{u_2} {α : Type u_2} [PseudoEMetricSpace α] :\n  TopologicalSpace.PseudoMetrizableSpace α</code>",
  "107":
- "<code>MeasureTheory.AEStronglyMeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} [TopologicalSpace β] [m : MeasurableSpace α]\n  {m₀ : MeasurableSpace α} (f : α → β) (μ : Measure α := by volume_tac) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A function is `AEStronglyMeasurable` with respect to a measure `μ` if it is almost everywhere\nequal to the limit of a sequence of simple functions.\n\nOne can specify the sigma-algebra according to which simple functions are taken using the\n`AEStronglyMeasurable[m]` notation in the `MeasureTheory` scope. </code>",
- "106": "<code>¬∃ c, Tendsto (fun x =&gt; Y x ω) atTop (𝓝 c)</code>",
+ "<code>UniformSpace.toTopologicalSpace.{u} {α : Type u} [self : UniformSpace α] : TopologicalSpace α</code>",
+ "106":
+ "<code>PseudoMetricSpace.toUniformSpace.{u} {α : Type u} [self : PseudoMetricSpace α] : UniformSpace α</code>",
  "105":
- "<code>Classical.propDecidable (a : Prop) : Decidable a</code><span class=\"sep\"></span><code class=\"docstring\">All propositions are `Decidable`. </code>",
- "104": "<code>(¬∃ c, Tendsto (fun n =&gt; Y n ω) atTop (𝓝 c)) → x_1</code>",
- "103": "<code>(∃ c, Tendsto (fun n =&gt; Y n ω) atTop (𝓝 c)) → x_1</code>",
- "102": "<code>Decidable (∃ c, Tendsto (fun n =&gt; Y n ω) atTop (𝓝 c))</code>",
+ "<code>MeasureTheory.AEStronglyMeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} [TopologicalSpace β] [m : MeasurableSpace α]\n  {m₀ : MeasurableSpace α} (f : α → β) (μ : Measure α := by volume_tac) : Prop</code><span class=\"sep\"></span><code class=\"docstring\">A function is `AEStronglyMeasurable` with respect to a measure `μ` if it is almost everywhere\nequal to the limit of a sequence of simple functions.\n\nOne can specify the sigma-algebra according to which simple functions are taken using the\n`AEStronglyMeasurable[m]` notation in the `MeasureTheory` scope. </code>",
+ "104":
+ "<code>AEMeasurable.aestronglyMeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} [TopologicalSpace β] {m₀ : MeasurableSpace α}\n  {μ : Measure α} {f : α → β} [MeasurableSpace β] [TopologicalSpace.PseudoMetrizableSpace β] [OpensMeasurableSpace β]\n  [SecondCountableTopology β] (hf : AEMeasurable f μ) : AEStronglyMeasurable f μ</code><span class=\"sep\"></span><code class=\"docstring\">In a space with second countable topology, measurable implies strongly measurable. </code>",
+ "103":
+ "<code>Measurable.aemeasurable.{u_1, u_2} {α : Type u_1} {β : Type u_2} {m : MeasurableSpace α} [MeasurableSpace β] {f : α → β}\n  {μ : Measure α} (h : Measurable f) : AEMeasurable f μ</code>",
+ "102":
+ "<code>le_rfl.{u_1} {α : Type u_1} [Preorder α] {a : α} : a ≤ a</code><span class=\"sep\"></span><code class=\"docstring\">A version of `le_refl` where the argument is implicit </code>",
  "101":
- "<code>congrArg.{u, v} {α : Sort u} {β : Sort v} {a₁ a₂ : α} (f : α → β) (h : a₁ = a₂) : f a₁ = f a₂</code><span class=\"sep\"></span><code class=\"docstring\">Congruence in the function argument: if `a₁ = a₂` then `f a₁ = f a₂` for\nany (nondependent) function `f`. This is more powerful than it might look at first, because\nyou can also use a lambda expression for `f` to prove that\n`&lt;something containing a₁&gt; = &lt;something containing a₂&gt;`. This function is used\ninternally by tactics like `congr` and `simp` to apply equalities inside\nsubterms.\n\nFor more information: [Equality](https://lean-lang.org/theorem_proving_in_lean4/quantifiers_and_equality.html#equality)\n</code>",
+ "<code>rfl.{u} {α : Sort u} {a : α} : a = a</code><span class=\"sep\"></span><code class=\"docstring\">`rfl : a = a` is the unique constructor of the equality type. This is the\nsame as `Eq.refl` except that it takes `a` implicitly instead of explicitly.\n\nThis is a more powerful theorem than it may appear at first, because although\nthe statement of the theorem is `a = a`, Lean will allow anything that is\ndefinitionally equal to that type. So, for instance, `2 + 2 = 4` is proven in\nLean by `rfl`, because both sides are the same up to definitional equality.\n</code>",
  "100":
- "<code>Eq.mpr.{u} {α β : Sort u} (h : α = β) (b : β) : α</code><span class=\"sep\"></span><code class=\"docstring\">If `h : α = β` is a proof of type equality, then `h.mpr : β → α` is the induced\n\"cast\" operation in the reverse direction, mapping elements of `β` to elements of `α`.\n\nYou can prove theorems about the resulting element by induction on `h`, since\n`rfl.mpr` is definitionally the identity function.\n</code>",
+ "<code>le_sSup.{u_1} {α : Type u_1} [CompleteSemilatticeSup α] {s : Set α} {a : α} : a ∈ s → a ≤ sSup s</code>",
  "10":
  "<code>Set.{u} (α : Type u) : Type u</code><span class=\"sep\"></span><code class=\"docstring\">A set is a collection of elements of some type `α`.\n\nAlthough `Set` is defined as `α → Prop`, this is an implementation detail which should not be\nrelied on. Instead, `setOf` and membership of a set (`∈`) should be used to convert between sets\nand predicates.\n</code>",
  "1": "<code>Type u_1</code>",

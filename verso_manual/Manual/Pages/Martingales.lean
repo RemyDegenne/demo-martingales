@@ -97,11 +97,11 @@ theorem ae_tendsto_limitProcess {Y : ℕ → Ω → ℝ} (hY : Submartingale Y �
 
 # Stopping times
 
-A stopping time with respect to a filtration is a random time `τ : Ω → ℕ` such that
-for all `n`, the set `{ω | τ ω ≤ n}` is measurable with respect to `𝓕 n`.
+A stopping time with respect to a filtration indexed by `ℕ` is a random time {anchorTerm Variables3}`τ : Ω → ℕ∞` such that
+for all `n`, the set `{ω | τ ω ≤ n}` is measurable with respect to {anchorTerm Filtration}`𝓕 n`.
 
 ```anchor Variables3
-variable {τ : Ω → ℕ} (hτ : IsStoppingTime 𝓕 τ)
+variable {τ : Ω → ℕ∞} (hτ : IsStoppingTime 𝓕 τ)
 
 example (i : ℕ) : MeasurableSet[𝓕 i] {ω | τ ω ≤ i} := hτ.measurableSet_le i
 ```
@@ -112,10 +112,9 @@ stopped value of `Y` at `τ` has expectation smaller than its stopped value at `
 ```anchor submartingale_iff_expected_stoppedValue_mono
 theorem submartingale_iff_expected_stoppedValue_mono' {Y : ℕ → Ω → ℝ} (hadp : Adapted 𝓕 Y)
     (hint : ∀ i, Integrable (Y i) P) :
-    Submartingale Y 𝓕 P ↔
-      ∀ τ π : Ω → ℕ, IsStoppingTime 𝓕 τ → IsStoppingTime 𝓕 π → τ ≤ π → (∃ N, ∀ x, π x ≤ N) →
-        P[stoppedValue Y τ] ≤ P[stoppedValue Y π] :=
-  ⟨fun hf _ _ hτ hπ hle ⟨_, hN⟩ ↦ hf.expected_stoppedValue_mono hτ hπ hle hN,
+    Submartingale Y 𝓕 P ↔ ∀ τ π : Ω → ℕ∞, IsStoppingTime 𝓕 τ → IsStoppingTime 𝓕 π →
+      τ ≤ π → (∃ N : ℕ, ∀ x, π x ≤ N) → P[stoppedValue Y τ] ≤ P[stoppedValue Y π] :=
+  ⟨fun hf _ _ hτ hπ hle ⟨_, hN⟩ => hf.expected_stoppedValue_mono hτ hπ hle hN,
     submartingale_of_expected_stoppedValue_mono hadp hint⟩
 ```
 
@@ -128,9 +127,12 @@ protected theorem Submartingale.stoppedProcess {Y : ℕ → Ω → ℝ} (h : Sub
   · intro σ π hσ hπ hσ_le_π hπ_bdd
     simp_rw [stoppedValue_stoppedProcess]
     obtain ⟨n, hπ_le_n⟩ := hπ_bdd
+    have hπ_top ω : π ω ≠ ⊤ := ne_top_of_le_ne_top (by simp) (hπ_le_n ω)
+    have hσ_top ω : σ ω ≠ ⊤ := ne_top_of_le_ne_top (hπ_top ω) (hσ_le_π ω)
+    simp only [ne_eq, hσ_top, not_false_eq_true, ↓reduceIte, hπ_top, ge_iff_le]
     exact h.expected_stoppedValue_mono (hσ.min hτ) (hπ.min hτ)
-      (fun ω ↦ min_le_min (hσ_le_π ω) le_rfl) fun ω ↦ (min_le_left _ _).trans (hπ_le_n ω)
+      (fun ω => min_le_min (hσ_le_π ω) le_rfl) fun ω => (min_le_left _ _).trans (hπ_le_n ω)
   · exact Adapted.stoppedProcess_of_discrete h.adapted hτ
-  · exact fun i ↦
-      h.integrable_stoppedValue ((isStoppingTime_const _ i).min hτ) fun ω ↦ min_le_left _ _
+  · exact fun i =>
+      h.integrable_stoppedValue ((isStoppingTime_const _ i).min hτ) fun ω => min_le_left _ _
 ```
